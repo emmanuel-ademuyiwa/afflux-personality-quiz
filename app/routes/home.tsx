@@ -368,11 +368,49 @@ function isPersona(value: FormDataEntryValue | null): value is PersonaId {
 
 export function meta({}: Route.MetaArgs) {
   return [
-    { title: "Afflux Money Personality Quiz" },
+    {
+      title:
+        "Afflux Money Personality Quiz | Discover Your Financial Archetype",
+    },
     {
       name: "description",
       content:
-        "Discover if you’re a Saver, Spender, or Investor and unlock tailored property wealth moves with Afflux.",
+        "Discover if you're a Saver, Spender, or Investor and unlock tailored property wealth moves with Afflux. Take our 3-minute quiz to understand your money personality.",
+    },
+    {
+      property: "og:title",
+      content:
+        "Afflux Money Personality Quiz | Discover Your Financial Archetype",
+    },
+    {
+      property: "og:description",
+      content:
+        "Discover if you're a Saver, Spender, or Investor and unlock tailored property wealth moves with Afflux.",
+    },
+    {
+      property: "og:type",
+      content: "website",
+    },
+    {
+      property: "og:image",
+      content: "/image.png",
+    },
+    {
+      name: "twitter:card",
+      content: "summary_large_image",
+    },
+    {
+      name: "twitter:title",
+      content: "Afflux Money Personality Quiz",
+    },
+    {
+      name: "twitter:description",
+      content:
+        "Discover if you're a Saver, Spender, or Investor and unlock tailored property wealth moves with Afflux.",
+    },
+    {
+      name: "twitter:image",
+      content: "/image.png",
     },
   ];
 }
@@ -499,14 +537,25 @@ export default function Home() {
   return (
     <>
       <div className="min-h-screen text-[#0f0f0f]">
+        {/* Fixed Header */}
+        <header className="sticky top-0 z-50 w-full bg-white/95">
+          <div className="mx-auto flex max-w-6xl items-center justify-between px-4 py-3 md:py-4">
+            <img
+              src="/Afflux-Black.png"
+              alt="Afflux"
+              className="h-5 md:h-7 w-auto"
+            />
+            <Badge className="border-[#cc9933]/50 bg-[#cc9933]/10 text-[#cc9933] text-[10px] md:text-xs font-medium px-3 py-1.5">
+              Money Personality Quiz
+            </Badge>
+          </div>
+        </header>
+
         <main className="mx-auto flex max-w-6xl flex-col gap-10 px-4 pb-24 pt-12">
-          <header className="rounded-[40px] md:border border-[#E5E5E5] bg-linear-to-r from-white via-[#FAFAFA] to-white md:p-8 grid-gold md:shadow-sm">
+          <header className="rounded-[40px] md:border border-[#E5E5E5] md:bg-linear-to-r from-white via-[#FAFAFA] to-white md:p-8 grid-gold md:shadow-sm">
             <div className="relative z-10 flex flex-col gap-8 md:grid md:grid-cols-[1.2fr_0.8fr] md:items-center">
               <div className="space-y-6">
                 <div className="space-y-4">
-                  <Badge className="border-[#cc9933]/50 bg-[#cc9933]/10 text-[#cc9933] text-xs font-medium px-3 py-1.5">
-                    Afflux Money Personality Quiz
-                  </Badge>
                   <h1 className="text-4xl md:text-6xl font-bold leading-[1.1] tracking-tight text-[#0f0f0f]">
                     Discover Your
                     <br />
