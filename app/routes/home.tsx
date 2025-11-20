@@ -571,7 +571,7 @@ export default function Home() {
                     <span className="font-semibold text-[#1a1a1a]">
                       Investor
                     </span>
-                    ? Take our 3-minute quiz to unlock personalized property
+                    ? Take our 2-minute quiz to unlock personalized property
                     wealth strategies tailored to your financial instincts.
                   </p>
                 </div>
