@@ -1008,7 +1008,7 @@ export default function Home() {
                             fullName: e.target.value,
                           }))
                         }
-                        className="w-full rounded-2xl border border-[#E5E5E5] bg-white px-4 py-3 text-sm text-[#1a1a1a] transition-all focus:border-[#cc9933] focus:outline-none focus:ring-2 focus:ring-[#cc9933]/20"
+                        className="w-full rounded-2xl border border-[#E5E5E5] bg-white px-4 py-3 text-base text-[#1a1a1a] transition-all focus:border-[#cc9933] focus:outline-none focus:ring-2 focus:ring-[#cc9933]/20"
                         placeholder="Enter your full name"
                       />
                     </div>
@@ -1030,7 +1030,7 @@ export default function Home() {
                             email: e.target.value,
                           }))
                         }
-                        className="w-full rounded-2xl border border-[#E5E5E5] bg-white px-4 py-3 text-sm text-[#1a1a1a] transition-all focus:border-[#cc9933] focus:outline-none focus:ring-2 focus:ring-[#cc9933]/20"
+                        className="w-full rounded-2xl border border-[#E5E5E5] bg-white px-4 py-3 text-base text-[#1a1a1a] transition-all focus:border-[#cc9933] focus:outline-none focus:ring-2 focus:ring-[#cc9933]/20"
                         placeholder="Enter your email"
                       />
                     </div>
@@ -1052,7 +1052,7 @@ export default function Home() {
                             phone: e.target.value,
                           }))
                         }
-                        className="w-full rounded-2xl border border-[#E5E5E5] bg-white px-4 py-3 text-sm text-[#1a1a1a] transition-all focus:border-[#cc9933] focus:outline-none focus:ring-2 focus:ring-[#cc9933]/20"
+                        className="w-full rounded-2xl border border-[#E5E5E5] bg-white px-4 py-3 text-base text-[#1a1a1a] transition-all focus:border-[#cc9933] focus:outline-none focus:ring-2 focus:ring-[#cc9933]/20"
                         placeholder="Enter your phone number"
                       />
                     </div>
