@@ -638,7 +638,7 @@ export default function Home() {
     <>
       <div className="min-h-screen text-[#0f0f0f]">
         {/* Main Header */}
-        <header className="sticky top-0 z-50 w-full bg-white/95 backdrop-blur-md border-b border-[#E5E5E5]/50">
+        <header className="sticky top-0 z-50 w-full bg-white/95 backdrop-blur-md">
           <div className="mx-auto flex max-w-6xl items-center justify-between px-4 py-3 md:py-4">
             <img
               src="/Afflux-Black.png"
