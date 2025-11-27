@@ -350,9 +350,9 @@ const featuredMoments: Highlight[] = [
 ];
 
 const defaultSharePayload = {
-  title: "Afflux Money Personality Quiz",
+  title: "Afflux Wealth Personality Test",
   message:
-    "I’m discovering whether I’m a Saver, Spender or Investor with Afflux. Jump in and get your own card.",
+    "I'm discovering whether I'm a Saver, Spender or Investor with Afflux. Jump in and get your own card.",
   url: "https://afflux.ng/quiz",
 };
 
@@ -370,17 +370,17 @@ export function meta({}: Route.MetaArgs) {
   return [
     {
       title:
-        "Afflux Money Personality Quiz | Discover Your Financial Archetype",
+        "Afflux Wealth Personality Test | Discover Your Financial Archetype",
     },
     {
       name: "description",
       content:
-        "Discover if you're a Saver, Spender, or Investor and unlock tailored property wealth moves with Afflux. Take our 3-minute quiz to understand your money personality.",
+        "Discover if you're a Saver, Spender, or Investor and unlock tailored property wealth moves with Afflux. Take our 2-minute test to understand your money personality.",
     },
     {
       property: "og:title",
       content:
-        "Afflux Money Personality Quiz | Discover Your Financial Archetype",
+        "Afflux Wealth Personality Test | Discover Your Financial Archetype",
     },
     {
       property: "og:description",
@@ -401,7 +401,7 @@ export function meta({}: Route.MetaArgs) {
     },
     {
       name: "twitter:title",
-      content: "Afflux Money Personality Quiz",
+      content: "Afflux Wealth Personality Test",
     },
     {
       name: "twitter:description",
@@ -453,7 +453,7 @@ export async function action({ request }: Route.ActionArgs) {
     [personaId]: leaderboardSeed[personaId] + 1,
   };
 
-  const shareMessage = `I just took the Afflux Money Personality Quiz and I’m ${persona.title}! ${persona.headline} Discover yours via Afflux.`;
+  const shareMessage = `I just took the Afflux Wealth Personality Test and I'm ${persona.title}! ${persona.headline} Discover yours via Afflux.`;
 
   return Response.json({
     result: persona,
@@ -473,23 +473,91 @@ export default function Home() {
   const fetcher = useFetcher<ActionData>();
 
   const [answers, setAnswers] = React.useState<Record<string, PersonaId>>({});
+  const [userData, setUserData] = React.useState<{
+    email: string;
+    phone: string;
+    fullName: string;
+  }>({
+    email: "",
+    phone: "",
+    fullName: "",
+  });
+  const [isDataCollected, setIsDataCollected] = React.useState(false);
+  const [currentQuestionIndex, setCurrentQuestionIndex] = React.useState(0);
+  const [localResult, setLocalResult] = React.useState<PersonaDetails | null>(
+    null
+  );
+  const [localTallies, setLocalTallies] = React.useState<Leaderboard | null>(
+    null
+  );
   const resultCardRef = React.useRef<HTMLDivElement>(null);
+  const dataFormRef = React.useRef<HTMLDivElement>(null);
 
   const answeredCount = React.useMemo(
     () => Object.keys(answers).length,
     [answers]
   );
   const progressValue = (answeredCount / questionBank.length) * 100;
+  const currentQuestion = questionBank[currentQuestionIndex];
+  const hasAnsweredCurrent = answers[currentQuestion?.id] !== undefined;
 
-  const isSubmitting = fetcher.state !== "idle";
-  const result = fetcher.data?.result;
-  const tallies = fetcher.data?.tallies;
+  // Calculate result locally
+  const calculateResult = React.useCallback(() => {
+    if (answeredCount !== questionBank.length) return;
+
+    const tallies: Leaderboard = {
+      saver: 0,
+      spender: 0,
+      investor: 0,
+    };
+
+    for (const question of questionBank) {
+      const answer = answers[question.id];
+      if (answer) {
+        tallies[answer] += 1;
+      }
+    }
+
+    const personaId = evaluateResult(tallies);
+    const persona = personaDeck[personaId];
+
+    setLocalTallies(tallies);
+    setLocalResult(persona);
+  }, [answers, answeredCount]);
+
+  React.useEffect(() => {
+    if (answeredCount === questionBank.length && !localResult) {
+      calculateResult();
+    }
+  }, [answeredCount, calculateResult, localResult]);
+
+  // Scroll to result when it's calculated
+  React.useEffect(() => {
+    if (localResult && resultCardRef.current) {
+      setTimeout(() => {
+        resultCardRef.current?.scrollIntoView({
+          behavior: "smooth",
+          block: "start",
+        });
+      }, 300);
+    }
+  }, [localResult]);
+
+  const isSubmitting = false; // No server submission
+  const result = localResult || fetcher.data?.result;
+  const tallies = localTallies || fetcher.data?.tallies;
   const leaderboard = fetcher.data?.leaderboard ?? initialLeaderboard;
-  const sharePayload = fetcher.data?.share ?? defaultSharePayload;
+  const sharePayload = localResult
+    ? {
+        title: localResult.title,
+        message: `I just took the Afflux Wealth Personality Test and I'm ${localResult.title}! ${localResult.headline} Discover yours via Afflux.`,
+        url: "https://afflux.ng/quiz",
+      }
+    : (fetcher.data?.share ?? defaultSharePayload);
   const totalLeaderboardVotes =
     leaderboard.saver + leaderboard.spender + leaderboard.investor || 1;
 
-  const formRef = React.useRef<HTMLFormElement>(null);
+  const formRef = React.useRef<HTMLDivElement>(null);
 
   // React.useEffect(() => {
   //   if (fetcher.state === "idle" && fetcher.data?.result) {
@@ -534,25 +602,94 @@ export default function Home() {
     }
   }
 
+  function handleDataSubmit(e: React.FormEvent<HTMLFormElement>) {
+    e.preventDefault();
+    if (userData.email && userData.phone && userData.fullName) {
+      setIsDataCollected(true);
+      // Scroll to top on mobile when test starts
+      if (window.innerWidth < 1024) {
+        window.scrollTo({ top: 0, behavior: "smooth" });
+      }
+    }
+  }
+
+  function handleNextQuestion() {
+    if (currentQuestionIndex < questionBank.length - 1) {
+      setCurrentQuestionIndex(currentQuestionIndex + 1);
+    }
+  }
+
+  function handlePreviousQuestion() {
+    if (currentQuestionIndex > 0) {
+      setCurrentQuestionIndex(currentQuestionIndex - 1);
+    }
+  }
+
+  function handleAnswerSelect(questionId: string, value: PersonaId) {
+    setAnswers((prev) => ({
+      ...prev,
+      [questionId]: value,
+    }));
+  }
+
+  const isTestActive = isDataCollected && !result;
+
   return (
     <>
       <div className="min-h-screen text-[#0f0f0f]">
-        {/* Fixed Header */}
-        <header className="sticky top-0 z-50 w-full bg-white/95">
+        {/* Main Header */}
+        <header className="sticky top-0 z-50 w-full bg-white/95 backdrop-blur-md border-b border-[#E5E5E5]/50">
           <div className="mx-auto flex max-w-6xl items-center justify-between px-4 py-3 md:py-4">
             <img
               src="/Afflux-Black.png"
               alt="Afflux"
               className="h-5 md:h-7 w-auto"
             />
-            <Badge className="border-[#cc9933]/50 bg-[#cc9933]/10 text-[#cc9933] text-[10px] md:text-xs font-medium px-3 py-1.5">
-              Money Personality Quiz
-            </Badge>
+            {isTestActive ? (
+              <div className="lg:hidden flex items-center gap-3">
+                <div className="flex items-center gap-2">
+                  <div className="h-8 w-8 rounded-full bg-[#cc9933]/10 flex items-center justify-center">
+                    <Target className="h-4 w-4 text-[#cc9933]" />
+                  </div>
+                  <span className="text-xs font-semibold text-[#1a1a1a]">
+                    Question {currentQuestionIndex + 1} of {questionBank.length}
+                  </span>
+                </div>
+                <span className="text-xs font-medium text-[#666] hidden sm:inline">
+                  {Math.round(progressValue)}%
+                </span>
+              </div>
+            ) : (
+              <Badge className="border-[#cc9933]/50 bg-[#cc9933]/10 text-[#cc9933] text-[10px] md:text-xs font-medium px-3 py-1.5">
+                Wealth Personality Test
+              </Badge>
+            )}
           </div>
+          {isTestActive && (
+            <div className="lg:hidden px-4 pb-3">
+              <div className="h-1.5 w-full bg-[#F5F5F5] rounded-full overflow-hidden">
+                <div
+                  className="h-full bg-linear-to-r from-[#cc9933] to-[#cc9933]/80 rounded-full transition-all duration-500 ease-out"
+                  style={{ width: `${progressValue}%` }}
+                />
+              </div>
+            </div>
+          )}
         </header>
 
-        <main className="mx-auto flex max-w-6xl flex-col gap-10 px-4 pb-24 pt-12">
-          <header className="rounded-[40px] md:border border-[#E5E5E5] md:bg-linear-to-r from-white via-[#FAFAFA] to-white md:p-8 grid-gold md:shadow-sm">
+        <main
+          className={cn(
+            "mx-auto flex max-w-6xl flex-col gap-10 px-4 pb-24 transition-all duration-300",
+            isTestActive ? "lg:pt-12 pt-0 min-h-screen lg:pb-24 pb-32" : "pt-12"
+          )}
+        >
+          {/* Hero Section - Hidden on mobile when test is active */}
+          <header
+            className={cn(
+              "rounded-[40px] md:border border-[#E5E5E5] md:bg-linear-to-r from-white via-[#FAFAFA] to-white md:p-8 grid-gold md:shadow-sm transition-all duration-300",
+              isTestActive ? "lg:block hidden" : "block"
+            )}
+          >
             <div className="relative z-10 flex flex-col gap-8 md:grid md:grid-cols-[1.2fr_0.8fr] md:items-center">
               <div className="space-y-6">
                 <div className="space-y-4">
@@ -571,8 +708,9 @@ export default function Home() {
                     <span className="font-semibold text-[#1a1a1a]">
                       Investor
                     </span>
-                    ? Take our 2-minute quiz to unlock personalized property
-                    wealth strategies tailored to your financial instincts.
+                    ? Your money habits tell a story. Take this 2 minutes test
+                    to understand yours and discover the path to the future you
+                    want.
                   </p>
                 </div>
                 <div className="flex flex-col gap-3 sm:flex-row sm:flex-wrap">
@@ -580,7 +718,7 @@ export default function Home() {
                     size="lg"
                     className="w-full sm:w-auto"
                     onClick={() =>
-                      formRef.current?.scrollIntoView({
+                      dataFormRef.current?.scrollIntoView({
                         behavior: "smooth",
                         block: "start",
                       })
@@ -601,12 +739,12 @@ export default function Home() {
                 </div>
                 <div className="flex flex-col gap-4 text-sm text-[#888] sm:flex-row sm:flex-wrap sm:gap-6">
                   <div className="flex items-center gap-2">
-                    <Users className="h-4 w-4 text-[#cc9933]" /> 1,090 community
-                    responses
+                    <Users className="h-4 w-4 text-[#cc9933]" /> Join 1,090
+                    people discovering their money habits
                   </div>
                   <div className="flex items-center gap-2">
-                    <Sparkles className="h-4 w-4 text-[#cc9933]" /> Tailored
-                    Afflux property guidance
+                    <Sparkles className="h-4 w-4 text-[#cc9933]" /> Understand
+                    the mindset driving your money decisions
                   </div>
                   <div className="flex items-center gap-2">
                     <Trophy className="h-4 w-4 text-[#cc9933]" /> Unlock
@@ -658,149 +796,27 @@ export default function Home() {
             </div>
           </header>
 
-          <section className="grid gap-10 lg:grid-cols-[minmax(0,1.3fr)_minmax(0,0.7fr)]">
-            <Card className="border-[#E5E5E5] bg-white border-none shadow-none p-0 md:p-6 md:border md:shadow-sm">
-              <CardHeader className="p-0 pb-0 sm:p-8 sm:pb-0">
-                <CardTitle className="flex items-center justify-between text-[#1a1a1a]">
-                  Quiz Progress
-                  <span className="text-base font-normal text-[#666]">
-                    {answeredCount}/{questionBank.length} answered
-                  </span>
-                </CardTitle>
-                <CardDescription className="text-[#666]">
-                  Tap into your instinct per question. No overthinking — just
-                  your honest reactions.
-                </CardDescription>
-              </CardHeader>
-              <CardContent className="p-0 pt-4 sm:p-8 sm:pt-6">
-                <Progress value={progressValue} className="mb-8" />
-                <fetcher.Form method="post" ref={formRef} className="space-y-8">
-                  {questionBank.map((question, idx) => (
-                    <div
-                      key={question.id}
-                      className="rounded-3xl border border-[#E5E5E5] bg-white p-6 shadow-sm space-y-6 hover:shadow-md transition-shadow"
-                    >
-                      <div className="flex flex-wrap items-start justify-between gap-4">
-                        <div>
-                          <p className="text-sm uppercase mb-3 tracking-[0.4em] text-[#999]">
-                            Question {idx + 1}
-                          </p>
-                          <h3 className="md:text-xl font-semibold text-[#1a1a1a]">
-                            {question.title}
-                          </h3>
-                          <p className="text-sm text-[#666]">
-                            {question.helper}
-                          </p>
-                        </div>
-                      </div>
-                      <div className="grid gap-3">
-                        {question.options.map((option) => {
-                          const optionId = `${question.id}-${option.value}`;
-                          const selected =
-                            answers[question.id] === option.value;
-                          return (
-                            <div key={option.letter} className="group">
-                              <input
-                                id={optionId}
-                                type="radio"
-                                name={question.id}
-                                value={option.value}
-                                checked={selected}
-                                onChange={(event) => {
-                                  setAnswers((prev) => ({
-                                    ...prev,
-                                    [question.id]: event.target
-                                      .value as PersonaId,
-                                  }));
-                                }}
-                                className="peer sr-only"
-                              />
-                              <label
-                                htmlFor={optionId}
-                                className={cn(
-                                  "flex cursor-pointer flex-col gap-4 rounded-2xl border p-4 transition-all focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#cc9933]/60 sm:flex-row sm:items-center sm:justify-between",
-                                  selected
-                                    ? "border-[#cc9933] bg-[#cc9933]/10"
-                                    : "border-[#E5E5E5] bg-[#FAFAFA] hover:border-[#cc9933]/30"
-                                )}
-                              >
-                                <div className="flex w-full items-start gap-4 text-left sm:items-center">
-                                  <span
-                                    className={cn(
-                                      "flex h-10 min-w-10 items-center justify-center rounded-2xl border text-sm font-semibold",
-                                      selected
-                                        ? "border-[#cc9933] bg-[#cc9933] text-black"
-                                        : "border-[#E5E5E5] bg-white text-[#666]"
-                                    )}
-                                  >
-                                    {option.letter}
-                                  </span>
-                                  <span
-                                    className={cn(
-                                      "text-sm sm:text-base",
-                                      selected
-                                        ? "text-[#1a1a1a]"
-                                        : "text-[#333]"
-                                    )}
-                                  >
-                                    {option.label}
-                                  </span>
-                                </div>
-                                <span
-                                  className={cn(
-                                    "h-4 w-4 rounded-full border self-end sm:self-center",
-                                    selected
-                                      ? "border-[#cc9933] bg-[#cc9933]"
-                                      : "border-[#CCC]"
-                                  )}
-                                  aria-hidden
-                                />
-                              </label>
-                            </div>
-                          );
-                        })}
-                      </div>
-                    </div>
-                  ))}
-                  <div className="flex flex-col gap-3 pt-4 sm:flex-row">
-                    <Button
-                      type="submit"
-                      size="lg"
-                      className="w-full sm:w-auto"
-                      disabled={
-                        answeredCount !== questionBank.length || isSubmitting
-                      }
-                    >
-                      {isSubmitting ? "Scoring..." : "See my money persona"}
-                      <Crown className="ml-2 h-5 w-5" />
-                    </Button>
-                    <Button
-                      type="button"
-                      variant="ghost"
-                      className="w-full sm:w-auto"
-                      onClick={() => {
-                        setAnswers({});
-                        formRef.current?.reset();
-                      }}
-                      disabled={isSubmitting}
-                    >
-                      Reset answers
-                    </Button>
-                  </div>
-                </fetcher.Form>
-              </CardContent>
-            </Card>
-
-            <div className="space-y-8">
-              {result && (
-                <Card
-                  ref={resultCardRef}
-                  className="relative overflow-hidden border-[#cc9933]/20 bg-linear-to-br from-white via-[#FFFBF5] to-white shadow-lg"
-                >
-                  {/* Decorative gradient overlay */}
-                  <div className="absolute top-0 right-0 w-64 h-64 bg-linear-to-br from-[#cc9933]/5 to-transparent rounded-full blur-3xl pointer-events-none" />
-
-                  <CardHeader className="relative p-8 pb-6">
+          <section
+            className={cn(
+              "grid gap-10 transition-all duration-300",
+              isTestActive
+                ? "lg:grid-cols-[minmax(0,1.3fr)_minmax(0,0.7fr)] w-full"
+                : "lg:grid-cols-[minmax(0,1.3fr)_minmax(0,0.7fr)]"
+            )}
+          >
+            <Card
+              ref={dataFormRef}
+              className={cn(
+                "border-[#E5E5E5] bg-white w-full transition-all duration-300",
+                isTestActive
+                  ? "border-none shadow-none p-0 lg:p-6 lg:border lg:shadow-sm fixed lg:relative inset-0 lg:inset-auto z-40 lg:z-auto bg-white overflow-y-auto lg:overflow-visible"
+                  : "border-none shadow-none p-0 md:p-6 md:border md:shadow-sm"
+              )}
+            >
+              {result ? (
+                // Result Card - replaces test when result is available
+                <div ref={resultCardRef}>
+                  <CardHeader className="relative p-8 px-0 md:px-8 pb-6">
                     <div className="flex items-start justify-between gap-4 mb-4">
                       <div className="space-y-2">
                         <Badge className="border-[#cc9933]/60 bg-[#cc9933]/10 text-[#cc9933] text-[10px] font-semibold px-3 py-1">
@@ -819,7 +835,7 @@ export default function Home() {
                     </CardDescription>
                   </CardHeader>
 
-                  <CardContent className="relative space-y-6 p-8 pt-0">
+                  <CardContent className="relative space-y-6 p-0 md:p-8 pt-0">
                     {/* Personality Insight */}
                     <div className="relative rounded-3xl border border-[#cc9933]/20 bg-linear-to-br from-[#cc9933]/5 via-white to-white p-6 shadow-sm">
                       <div className="flex items-start gap-4">
@@ -890,7 +906,7 @@ export default function Home() {
                         <p className="text-xs font-semibold uppercase tracking-wider text-[#666] px-1">
                           Your Score Breakdown
                         </p>
-                        <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
+                        <div className="grid grid-cols-3 gap-3">
                           {(Object.keys(personaDeck) as PersonaId[]).map(
                             (key) => {
                               const percent = Math.round(
@@ -960,20 +976,303 @@ export default function Home() {
                           Share Result
                         </Button>
                       </div>
-                      {/* <Button
-                        type="button"
-                        variant="ghost"
-                        className="w-full justify-center text-sm"
-                        onClick={copyShareMessage}
-                      >
-                        <Copy className="mr-2 h-4 w-4" />
-                        Copy Share Text
-                      </Button> */}
                     </div>
                   </CardContent>
-                </Card>
-              )}
+                </div>
+              ) : !isDataCollected ? (
+                <CardContent className="p-6 sm:p-8">
+                  <CardHeader className="p-0 pb-6">
+                    <CardTitle className="text-[#1a1a1a]">
+                      Get Started
+                    </CardTitle>
+                    <CardDescription className="text-[#666]">
+                      Please provide your details to begin the test.
+                    </CardDescription>
+                  </CardHeader>
+                  <form onSubmit={handleDataSubmit} className="space-y-6">
+                    <div className="space-y-2">
+                      <label
+                        htmlFor="fullName"
+                        className="text-sm font-medium text-[#1a1a1a]"
+                      >
+                        Full Name
+                      </label>
+                      <input
+                        id="fullName"
+                        type="text"
+                        required
+                        value={userData.fullName}
+                        onChange={(e) =>
+                          setUserData((prev) => ({
+                            ...prev,
+                            fullName: e.target.value,
+                          }))
+                        }
+                        className="w-full rounded-2xl border border-[#E5E5E5] bg-white px-4 py-3 text-sm text-[#1a1a1a] transition-all focus:border-[#cc9933] focus:outline-none focus:ring-2 focus:ring-[#cc9933]/20"
+                        placeholder="Enter your full name"
+                      />
+                    </div>
+                    <div className="space-y-2">
+                      <label
+                        htmlFor="email"
+                        className="text-sm font-medium text-[#1a1a1a]"
+                      >
+                        Email
+                      </label>
+                      <input
+                        id="email"
+                        type="email"
+                        required
+                        value={userData.email}
+                        onChange={(e) =>
+                          setUserData((prev) => ({
+                            ...prev,
+                            email: e.target.value,
+                          }))
+                        }
+                        className="w-full rounded-2xl border border-[#E5E5E5] bg-white px-4 py-3 text-sm text-[#1a1a1a] transition-all focus:border-[#cc9933] focus:outline-none focus:ring-2 focus:ring-[#cc9933]/20"
+                        placeholder="Enter your email"
+                      />
+                    </div>
+                    <div className="space-y-2">
+                      <label
+                        htmlFor="phone"
+                        className="text-sm font-medium text-[#1a1a1a]"
+                      >
+                        Phone Number
+                      </label>
+                      <input
+                        id="phone"
+                        type="tel"
+                        required
+                        value={userData.phone}
+                        onChange={(e) =>
+                          setUserData((prev) => ({
+                            ...prev,
+                            phone: e.target.value,
+                          }))
+                        }
+                        className="w-full rounded-2xl border border-[#E5E5E5] bg-white px-4 py-3 text-sm text-[#1a1a1a] transition-all focus:border-[#cc9933] focus:outline-none focus:ring-2 focus:ring-[#cc9933]/20"
+                        placeholder="Enter your phone number"
+                      />
+                    </div>
+                    <Button
+                      type="submit"
+                      size="lg"
+                      className="w-full"
+                      disabled={
+                        !userData.email || !userData.phone || !userData.fullName
+                      }
+                    >
+                      Start Test
+                      <ArrowUpRight className="ml-2 h-5 w-5" />
+                    </Button>
+                  </form>
+                </CardContent>
+              ) : (
+                <>
+                  {/* Desktop Progress Header */}
+                  <CardHeader className="hidden lg:block p-0 pb-0 sm:p-8 sm:pb-0">
+                    <CardTitle className="flex items-center justify-between text-[#1a1a1a]">
+                      Quiz Progress
+                      <span className="text-base font-normal text-[#666]">
+                        {answeredCount}/{questionBank.length} answered
+                      </span>
+                    </CardTitle>
+                    <CardDescription className="text-[#666]">
+                      Tap into your instinct per question. No overthinking —
+                      just your honest reactions.
+                    </CardDescription>
+                  </CardHeader>
+                  <CardContent
+                    className={cn(
+                      "transition-all duration-300",
+                      isTestActive
+                        ? "p-6 lg:p-0 lg:pt-4 lg:sm:p-8 lg:sm:pt-6"
+                        : "p-0 pt-4 sm:p-8 sm:pt-6"
+                    )}
+                  >
+                    <Progress
+                      value={progressValue}
+                      className="mb-8 hidden lg:block"
+                    />
+                    <div ref={formRef} className="space-y-6 lg:space-y-8">
+                      {currentQuestion && (
+                        <div className="space-y-6 lg:space-y-8 mt-10 md:mt-0">
+                          {/* Mobile Question Header */}
+                          <div className="lg:hidden space-y-4 pt-4">
+                            <div className="flex items-center gap-2 text-xs text-[#999] uppercase tracking-wider">
+                              <div className="h-px w-8 bg-[#cc9933]/30" />
+                              <span>Question {currentQuestionIndex + 1}</span>
+                              <div className="h-px flex-1 bg-[#cc9933]/30" />
+                            </div>
+                            <h2 className="text-2xl font-bold text-[#1a1a1a] leading-tight">
+                              {currentQuestion.title}
+                            </h2>
+                            <p className="text-sm text-[#666] leading-relaxed">
+                              {currentQuestion.helper}
+                            </p>
+                          </div>
 
+                          {/* Desktop Question Header */}
+                          <div className="hidden lg:block rounded-3xl border border-[#E5E5E5] bg-white p-6 shadow-sm space-y-6 hover:shadow-md transition-shadow">
+                            <div className="flex flex-wrap items-start justify-between gap-4">
+                              <div>
+                                <p className="text-sm uppercase mb-3 tracking-[0.4em] text-[#999]">
+                                  Question {currentQuestionIndex + 1} of{" "}
+                                  {questionBank.length}
+                                </p>
+                                <h3 className="md:text-xl font-semibold text-[#1a1a1a]">
+                                  {currentQuestion.title}
+                                </h3>
+                                <p className="text-sm text-[#666]">
+                                  {currentQuestion.helper}
+                                </p>
+                              </div>
+                            </div>
+                          </div>
+                          {/* Options */}
+                          <div className="grid gap-3 lg:gap-3">
+                            {currentQuestion.options.map((option) => {
+                              const optionId = `${currentQuestion.id}-${option.value}`;
+                              const selected =
+                                answers[currentQuestion.id] === option.value;
+                              return (
+                                <div key={option.letter} className="group">
+                                  <input
+                                    id={optionId}
+                                    type="radio"
+                                    name={currentQuestion.id}
+                                    value={option.value}
+                                    checked={selected}
+                                    onChange={(event) => {
+                                      handleAnswerSelect(
+                                        currentQuestion.id,
+                                        event.target.value as PersonaId
+                                      );
+                                    }}
+                                    className="peer sr-only"
+                                  />
+                                  <label
+                                    htmlFor={optionId}
+                                    className={cn(
+                                      "flex cursor-pointer items-center gap-4 rounded-2xl border-2 p-4 lg:p-4 transition-all duration-200 active:scale-[0.98] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#cc9933]/60",
+                                      selected
+                                        ? "border-[#cc9933] bg-linear-to-br from-[#cc9933]/10 via-[#cc9933]/5 to-white shadow-md shadow-[#cc9933]/10"
+                                        : "border-[#E5E5E5] bg-white hover:border-[#cc9933]/40 hover:bg-[#FAFAFA]"
+                                    )}
+                                  >
+                                    <span
+                                      className={cn(
+                                        "flex h-12 w-12 shrink-0 items-center justify-center rounded-xl border-2 text-base font-bold transition-all duration-200",
+                                        selected
+                                          ? "border-[#cc9933] bg-[#cc9933] text-white shadow-sm"
+                                          : "border-[#E5E5E5] bg-[#FAFAFA] text-[#666]"
+                                      )}
+                                    >
+                                      {option.letter}
+                                    </span>
+                                    <span
+                                      className={cn(
+                                        "flex-1 text-base leading-relaxed transition-colors",
+                                        selected
+                                          ? "font-semibold text-[#1a1a1a]"
+                                          : "text-[#333]"
+                                      )}
+                                    >
+                                      {option.label}
+                                    </span>
+                                    <div
+                                      className={cn(
+                                        "flex h-6 w-6 shrink-0 items-center justify-center rounded-full border-2 transition-all duration-200",
+                                        selected
+                                          ? "border-[#cc9933] bg-[#cc9933]"
+                                          : "border-[#CCC] bg-white"
+                                      )}
+                                    >
+                                      {selected && (
+                                        <div className="h-2 w-2 rounded-full bg-white" />
+                                      )}
+                                    </div>
+                                  </label>
+                                </div>
+                              );
+                            })}
+                          </div>
+                        </div>
+                      )}
+                      {/* Navigation Buttons */}
+                      <div className="flex flex-col gap-3 pt-6 lg:pt-4 border-t border-[#E5E5E5] lg:border-0">
+                        <div className="flex gap-3">
+                          <Button
+                            type="button"
+                            variant="outline"
+                            size="lg"
+                            onClick={handlePreviousQuestion}
+                            disabled={currentQuestionIndex === 0}
+                            className="flex-1 lg:flex-none"
+                          >
+                            Previous
+                          </Button>
+                          {currentQuestionIndex < questionBank.length - 1 ? (
+                            <Button
+                              type="button"
+                              size="lg"
+                              onClick={handleNextQuestion}
+                              disabled={!hasAnsweredCurrent}
+                              className="flex-1 lg:flex-none font-semibold shadow-lg shadow-[#cc9933]/20 hover:shadow-xl hover:shadow-[#cc9933]/30"
+                            >
+                              Continue
+                              <ArrowUpRight className="ml-2 h-5 w-5" />
+                            </Button>
+                          ) : (
+                            <Button
+                              type="button"
+                              size="lg"
+                              onClick={() => {
+                                if (!localResult) {
+                                  calculateResult();
+                                }
+                                // Scroll to result after a brief delay
+                                setTimeout(() => {
+                                  resultCardRef.current?.scrollIntoView({
+                                    behavior: "smooth",
+                                    block: "start",
+                                  });
+                                }, 100);
+                              }}
+                              disabled={answeredCount !== questionBank.length}
+                              className="flex-1 lg:flex-none font-semibold shadow-lg shadow-[#cc9933]/20 hover:shadow-xl hover:shadow-[#cc9933]/30"
+                            >
+                              {localResult ? "View Result" : "See My Result"}
+                              <Crown className="ml-2 h-5 w-5" />
+                            </Button>
+                          )}
+                        </div>
+                        <Button
+                          type="button"
+                          variant="ghost"
+                          className="w-full text-sm lg:hidden"
+                          onClick={() => {
+                            setAnswers({});
+                            setCurrentQuestionIndex(0);
+                            setLocalResult(null);
+                            setLocalTallies(null);
+                          }}
+                          disabled={isSubmitting}
+                        >
+                          Start Over
+                        </Button>
+                      </div>
+                    </div>
+                  </CardContent>
+                </>
+              )}
+            </Card>
+
+            <div
+              className={cn("hidden lg:block space-y-8", result && "hidden")}
+            >
               <Card className="border-[#E5E5E5] bg-white shadow-sm">
                 <CardHeader className="p-6 pb-0 sm:p-8 sm:pb-0">
                   <CardTitle className="text-[#1a1a1a]">
@@ -994,9 +1293,6 @@ export default function Home() {
                         {story.name.slice(0, 1)}
                       </div>
                       <div className="space-y-1">
-                        <p className="text-sm uppercase tracking-[0.3em] text-[#666]">
-                          {story.city}
-                        </p>
                         <p className="text-base font-semibold text-[#1a1a1a]">
                           {story.name} • {personaDeck[story.persona].title}
                         </p>
