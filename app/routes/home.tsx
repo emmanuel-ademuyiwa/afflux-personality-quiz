@@ -686,7 +686,7 @@ export default function Home() {
           {/* Hero Section - Hidden on mobile when test is active */}
           <header
             className={cn(
-              "rounded-[40px] md:border border-[#E5E5E5] md:bg-linear-to-r from-white via-[#FAFAFA] to-white md:p-8 grid-gold md:shadow-sm transition-all duration-300",
+              "rounded-[40px] md:border border-[#E5E5E5] md:bg-linear-to-r from-[#FFF7EA] via-[#FFFDF7] to-white md:p-8 grid-gold md:shadow-sm transition-all duration-300",
               isTestActive ? "lg:block hidden" : "block"
             )}
           >
