@@ -1055,7 +1055,7 @@ export default function Home() {
                   </CardContent>
                 </div>
               ) : !isDataCollected ? (
-                <CardContent className="p-6 sm:p-8">
+                <CardContent className="p-4 sm:p-8">
                   <CardHeader className="p-0 pb-6">
                     <CardTitle className="text-[#1a1a1a]">
                       Get Started
