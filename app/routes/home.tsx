@@ -355,7 +355,7 @@ const defaultSharePayload = {
   title: "Afflux Wealth Personality Test",
   message:
     "I'm discovering whether I'm a Saver, Spender or Investor with Afflux. Jump in and get your own card.",
-  url: "https://afflux.ng/quiz",
+  url: "https://afflux.ng",
 };
 
 function evaluateResult(tallies: Leaderboard): PersonaId {
@@ -480,7 +480,7 @@ export async function action({ request }: Route.ActionArgs) {
     share: {
       title: persona.title,
       message: shareMessage,
-      url: "https://afflux.ng/quiz",
+      url: "https://afflux.ng",
     },
   });
 }
@@ -618,7 +618,7 @@ export default function Home() {
     ? {
         title: localResult.title,
         message: `I just took the Afflux Wealth Personality Test and I'm ${localResult.title}! ${localResult.headline} Discover yours via Afflux.`,
-        url: "https://afflux.ng/quiz",
+        url: "https://afflux.ng",
       }
     : (fetcher.data?.share ?? defaultSharePayload);
   const totalLeaderboardVotes =
