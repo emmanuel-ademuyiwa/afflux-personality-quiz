@@ -15,6 +15,8 @@ import {
 } from "lucide-react";
 import * as React from "react";
 import { useFetcher, useLoaderData } from "react-router";
+import { Formik, Form, Field, ErrorMessage } from "formik";
+import * as Yup from "yup";
 
 import { Badge } from "~/components/ui/badge";
 import { Button } from "~/components/ui/button";
@@ -59,8 +61,8 @@ type LoaderData = {
 
 const questionBank: Question[] = [
   {
-    id: "q1",
-    title: "When you receive money, what’s the first thing you do?",
+    id: "a1b2c3d4-e5f6-4789-a012-b3c4d5e6f789",
+    title: "When you receive money, what's the first thing you do?",
     helper: "Salary, gifts or allowance — your reflex matters.",
     options: [
       {
@@ -68,7 +70,7 @@ const questionBank: Question[] = [
         label: "Transfer a portion to savings or set it aside.",
         value: "saver",
       },
-      { letter: "B", label: "Buy something I’ve wanted.", value: "spender" },
+      { letter: "B", label: "Buy something I've wanted.", value: "spender" },
       {
         letter: "C",
         label: "Check how I can make that money grow.",
@@ -77,7 +79,7 @@ const questionBank: Question[] = [
     ],
   },
   {
-    id: "q2",
+    id: "b2c3d4e5-f6a7-4890-b123-c4d5e6f7a890",
     title: "How do you feel about budgeting?",
     helper: "Your money mindset in one word.",
     options: [
@@ -99,13 +101,13 @@ const questionBank: Question[] = [
     ],
   },
   {
-    id: "q3",
-    title: "You see a “Buy Now, Pay Later” gadget offer. What happens?",
+    id: "c3d4e5f6-a7b8-4901-c234-d5e6f7a8b901",
+    title: 'You see a "Buy Now, Pay Later" gadget offer. What happens?',
     helper: "Delayed gratification vs instant joy.",
     options: [
       {
         letter: "A",
-        label: "Ignore it; I’d rather save up properly.",
+        label: "Ignore it; I'd rather save up properly.",
         value: "saver",
       },
       {
@@ -121,7 +123,7 @@ const questionBank: Question[] = [
     ],
   },
   {
-    id: "q4",
+    id: "d4e5f6a7-b8c9-4012-d345-e6f7a8b9c012",
     title: "How often do you review your accounts?",
     helper: "Bank statements, apps, alerts — how close are you?",
     options: [
@@ -143,7 +145,7 @@ const questionBank: Question[] = [
     ],
   },
   {
-    id: "q5",
+    id: "e5f6a7b8-c9d0-4123-e456-f7a8b9c0d123",
     title: "When you think about money, what comes first?",
     helper: "Security, comfort or freedom?",
     options: [
@@ -165,7 +167,7 @@ const questionBank: Question[] = [
     ],
   },
   {
-    id: "q6",
+    id: "f6a7b8c9-d0e1-4234-f567-a8b9c0d1e234",
     title: "How do you usually make financial decisions?",
     helper: "Research-driven, instinctive, or strategic?",
     options: [
@@ -187,8 +189,8 @@ const questionBank: Question[] = [
     ],
   },
   {
-    id: "q7",
-    title: "₦500,000 hits your account today. What’s the play?",
+    id: "a7b8c9d0-e1f2-4345-a678-b9c0d1e2f345",
+    title: "₦500,000 hits your account today. What's the play?",
     helper: "Windfalls reveal true instincts.",
     options: [
       {
@@ -209,7 +211,7 @@ const questionBank: Question[] = [
     ],
   },
   {
-    id: "q8",
+    id: "b8c9d0e1-f2a3-4456-b789-c0d1e2f3a456",
     title: "How often do you talk about money?",
     helper: "Silence, vibes, or strategy sessions?",
     options: [
@@ -231,7 +233,7 @@ const questionBank: Question[] = [
     ],
   },
   {
-    id: "q9",
+    id: "c9d0e1f2-a3b4-4567-c890-d1e2f3a4b567",
     title: "How do you define money success?",
     helper: "Different versions of winning.",
     options: [
@@ -253,7 +255,7 @@ const questionBank: Question[] = [
     ],
   },
   {
-    id: "q10",
+    id: "d0e1f2a3-b4c5-4678-d901-e2f3a4b5c678",
     title: "If you had to choose one, what would it be?",
     helper: "Your north star.",
     options: [
@@ -366,6 +368,22 @@ function isPersona(value: FormDataEntryValue | null): value is PersonaId {
   return value === "saver" || value === "spender" || value === "investor";
 }
 
+// Validation schema for user data form
+const userDataSchema = Yup.object().shape({
+  firstName: Yup.string()
+    .required("First name is required")
+    .min(2, "First name must be at least 2 characters"),
+  lastName: Yup.string()
+    .required("Last name is required")
+    .min(2, "Last name must be at least 2 characters"),
+  email: Yup.string()
+    .required("Email is required")
+    .email("Please enter a valid email address"),
+  phone: Yup.string()
+    .required("Phone number is required")
+    .min(10, "Phone number must be at least 10 characters"),
+});
+
 export function meta({}: Route.MetaArgs) {
   return [
     {
@@ -476,11 +494,13 @@ export default function Home() {
   const [userData, setUserData] = React.useState<{
     email: string;
     phone: string;
-    fullName: string;
+    firstName: string;
+    lastName: string;
   }>({
     email: "",
     phone: "",
-    fullName: "",
+    firstName: "",
+    lastName: "",
   });
   const [isDataCollected, setIsDataCollected] = React.useState(false);
   const [currentQuestionIndex, setCurrentQuestionIndex] = React.useState(0);
@@ -490,6 +510,7 @@ export default function Home() {
   const [localTallies, setLocalTallies] = React.useState<Leaderboard | null>(
     null
   );
+  const [isSubmitted, setIsSubmitted] = React.useState(false);
   const resultCardRef = React.useRef<HTMLDivElement>(null);
   const dataFormRef = React.useRef<HTMLDivElement>(null);
 
@@ -500,6 +521,49 @@ export default function Home() {
   const progressValue = (answeredCount / questionBank.length) * 100;
   const currentQuestion = questionBank[currentQuestionIndex];
   const hasAnsweredCurrent = answers[currentQuestion?.id] !== undefined;
+
+  // Submit quiz data to API
+  const submitQuizData = React.useCallback(
+    async (resultPersona: PersonaDetails) => {
+      if (isSubmitted) return;
+
+      const answersPayload = questionBank.map((question) => {
+        const value = answers[question.id];
+        const option = question.options.find((opt) => opt.value === value);
+
+        return {
+          question_id: question.id,
+          answer: option?.letter ?? "",
+        };
+      });
+
+      const payload = {
+        first_name: userData.firstName.trim(),
+        last_name: userData.lastName.trim(),
+        email: userData.email,
+        phone_number: userData.phone,
+        answers: answersPayload,
+        result: resultPersona.id,
+      };
+
+      try {
+        await fetch(
+          "https://afflux-staging-backend-3sm5f.ondigitalocean.app/personality-test",
+          {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+            },
+            body: JSON.stringify(payload),
+          }
+        );
+        setIsSubmitted(true);
+      } catch (error) {
+        console.error("Failed to submit quiz data:", error);
+      }
+    },
+    [answers, userData, isSubmitted]
+  );
 
   // Calculate result locally
   const calculateResult = React.useCallback(() => {
@@ -523,7 +587,10 @@ export default function Home() {
 
     setLocalTallies(tallies);
     setLocalResult(persona);
-  }, [answers, answeredCount]);
+
+    // Submit quiz data when result is calculated
+    submitQuizData(persona);
+  }, [answers, answeredCount, submitQuizData]);
 
   React.useEffect(() => {
     if (answeredCount === questionBank.length && !localResult) {
@@ -602,14 +669,22 @@ export default function Home() {
     }
   }
 
-  function handleDataSubmit(e: React.FormEvent<HTMLFormElement>) {
-    e.preventDefault();
-    if (userData.email && userData.phone && userData.fullName) {
-      setIsDataCollected(true);
-      // Scroll to top on mobile when test starts
-      if (window.innerWidth < 1024) {
-        window.scrollTo({ top: 0, behavior: "smooth" });
-      }
+  function handleDataSubmit(values: {
+    firstName: string;
+    lastName: string;
+    email: string;
+    phone: string;
+  }) {
+    setUserData({
+      firstName: values.firstName,
+      lastName: values.lastName,
+      email: values.email,
+      phone: values.phone,
+    });
+    setIsDataCollected(true);
+    // Scroll to top on mobile when test starts
+    if (window.innerWidth < 1024) {
+      window.scrollTo({ top: 0, behavior: "smooth" });
     }
   }
 
@@ -989,85 +1064,133 @@ export default function Home() {
                       Please provide your details to begin the test.
                     </CardDescription>
                   </CardHeader>
-                  <form onSubmit={handleDataSubmit} className="space-y-6">
-                    <div className="space-y-2">
-                      <label
-                        htmlFor="fullName"
-                        className="text-sm font-medium text-[#1a1a1a]"
-                      >
-                        Full Name
-                      </label>
-                      <input
-                        id="fullName"
-                        type="text"
-                        required
-                        value={userData.fullName}
-                        onChange={(e) =>
-                          setUserData((prev) => ({
-                            ...prev,
-                            fullName: e.target.value,
-                          }))
-                        }
-                        className="w-full rounded-2xl border border-[#E5E5E5] bg-white px-4 py-3 text-base text-[#1a1a1a] transition-all focus:border-[#cc9933] focus:outline-none focus:ring-2 focus:ring-[#cc9933]/20"
-                        placeholder="Enter your full name"
-                      />
-                    </div>
-                    <div className="space-y-2">
-                      <label
-                        htmlFor="email"
-                        className="text-sm font-medium text-[#1a1a1a]"
-                      >
-                        Email
-                      </label>
-                      <input
-                        id="email"
-                        type="email"
-                        required
-                        value={userData.email}
-                        onChange={(e) =>
-                          setUserData((prev) => ({
-                            ...prev,
-                            email: e.target.value,
-                          }))
-                        }
-                        className="w-full rounded-2xl border border-[#E5E5E5] bg-white px-4 py-3 text-base text-[#1a1a1a] transition-all focus:border-[#cc9933] focus:outline-none focus:ring-2 focus:ring-[#cc9933]/20"
-                        placeholder="Enter your email"
-                      />
-                    </div>
-                    <div className="space-y-2">
-                      <label
-                        htmlFor="phone"
-                        className="text-sm font-medium text-[#1a1a1a]"
-                      >
-                        Phone Number
-                      </label>
-                      <input
-                        id="phone"
-                        type="tel"
-                        required
-                        value={userData.phone}
-                        onChange={(e) =>
-                          setUserData((prev) => ({
-                            ...prev,
-                            phone: e.target.value,
-                          }))
-                        }
-                        className="w-full rounded-2xl border border-[#E5E5E5] bg-white px-4 py-3 text-base text-[#1a1a1a] transition-all focus:border-[#cc9933] focus:outline-none focus:ring-2 focus:ring-[#cc9933]/20"
-                        placeholder="Enter your phone number"
-                      />
-                    </div>
-                    <Button
-                      type="submit"
-                      size="lg"
-                      className="w-full"
-                      disabled={
-                        !userData.email || !userData.phone || !userData.fullName
-                      }
-                    >
-                      Start Test
-                      <ArrowUpRight className="ml-2 h-5 w-5" />
-                    </Button>
-                  </form>
+                  <Formik
+                    initialValues={{
+                      firstName: userData.firstName,
+                      lastName: userData.lastName,
+                      email: userData.email,
+                      phone: userData.phone,
+                    }}
+                    enableReinitialize
+                    validationSchema={userDataSchema}
+                    onSubmit={handleDataSubmit}
+                  >
+                    {({ isSubmitting, isValid, touched, errors }) => (
+                      <Form className="space-y-6">
+                        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                          <div className="space-y-2">
+                            <label
+                              htmlFor="firstName"
+                              className="text-sm font-medium text-[#1a1a1a]"
+                            >
+                              First Name
+                            </label>
+                            <Field
+                              id="firstName"
+                              name="firstName"
+                              type="text"
+                              className={cn(
+                                "w-full rounded-2xl border bg-white px-4 py-3 text-base text-[#1a1a1a] transition-all focus:outline-none focus:ring-2",
+                                touched.firstName && errors.firstName
+                                  ? "border-red-500 focus:border-red-500 focus:ring-red-500/20"
+                                  : "border-[#E5E5E5] focus:border-[#cc9933] focus:ring-[#cc9933]/20"
+                              )}
+                              placeholder="Enter your first name"
+                            />
+                            <ErrorMessage
+                              name="firstName"
+                              component="p"
+                              className="text-sm text-red-500"
+                            />
+                          </div>
+                          <div className="space-y-2">
+                            <label
+                              htmlFor="lastName"
+                              className="text-sm font-medium text-[#1a1a1a]"
+                            >
+                              Last Name
+                            </label>
+                            <Field
+                              id="lastName"
+                              name="lastName"
+                              type="text"
+                              className={cn(
+                                "w-full rounded-2xl border bg-white px-4 py-3 text-base text-[#1a1a1a] transition-all focus:outline-none focus:ring-2",
+                                touched.lastName && errors.lastName
+                                  ? "border-red-500 focus:border-red-500 focus:ring-red-500/20"
+                                  : "border-[#E5E5E5] focus:border-[#cc9933] focus:ring-[#cc9933]/20"
+                              )}
+                              placeholder="Enter your last name"
+                            />
+                            <ErrorMessage
+                              name="lastName"
+                              component="p"
+                              className="text-sm text-red-500"
+                            />
+                          </div>
+                        </div>
+                        <div className="space-y-2">
+                          <label
+                            htmlFor="email"
+                            className="text-sm font-medium text-[#1a1a1a]"
+                          >
+                            Email
+                          </label>
+                          <Field
+                            id="email"
+                            name="email"
+                            type="email"
+                            className={cn(
+                              "w-full rounded-2xl border bg-white px-4 py-3 text-base text-[#1a1a1a] transition-all focus:outline-none focus:ring-2",
+                              touched.email && errors.email
+                                ? "border-red-500 focus:border-red-500 focus:ring-red-500/20"
+                                : "border-[#E5E5E5] focus:border-[#cc9933] focus:ring-[#cc9933]/20"
+                            )}
+                            placeholder="Enter your email"
+                          />
+                          <ErrorMessage
+                            name="email"
+                            component="p"
+                            className="text-sm text-red-500"
+                          />
+                        </div>
+                        <div className="space-y-2">
+                          <label
+                            htmlFor="phone"
+                            className="text-sm font-medium text-[#1a1a1a]"
+                          >
+                            Phone Number
+                          </label>
+                          <Field
+                            id="phone"
+                            name="phone"
+                            type="tel"
+                            className={cn(
+                              "w-full rounded-2xl border bg-white px-4 py-3 text-base text-[#1a1a1a] transition-all focus:outline-none focus:ring-2",
+                              touched.phone && errors.phone
+                                ? "border-red-500 focus:border-red-500 focus:ring-red-500/20"
+                                : "border-[#E5E5E5] focus:border-[#cc9933] focus:ring-[#cc9933]/20"
+                            )}
+                            placeholder="Enter your phone number"
+                          />
+                          <ErrorMessage
+                            name="phone"
+                            component="p"
+                            className="text-sm text-red-500"
+                          />
+                        </div>
+                        <Button
+                          type="submit"
+                          size="lg"
+                          className="w-full"
+                          disabled={isSubmitting || !isValid}
+                        >
+                          Start Test
+                          <ArrowUpRight className="ml-2 h-5 w-5" />
+                        </Button>
+                      </Form>
+                    )}
+                  </Formik>
                 </CardContent>
               ) : (
                 <>
@@ -1258,6 +1381,7 @@ export default function Home() {
                             setCurrentQuestionIndex(0);
                             setLocalResult(null);
                             setLocalTallies(null);
+                            setIsSubmitted(false);
                           }}
                           disabled={isSubmitting}
                         >
