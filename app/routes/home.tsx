@@ -355,7 +355,7 @@ const defaultSharePayload = {
   title: "Afflux Wealth Personality Test",
   message:
     "I'm discovering whether I'm a Saver, Spender or Investor with Afflux. Jump in and get your own card.",
-  url: "https://afflux.ng",
+  url: "https://afflux.app",
 };
 
 function evaluateResult(tallies: Leaderboard): PersonaId {
@@ -480,7 +480,7 @@ export async function action({ request }: Route.ActionArgs) {
     share: {
       title: persona.title,
       message: shareMessage,
-      url: "https://afflux.ng",
+      url: "https://afflux.app",
     },
   });
 }
@@ -618,7 +618,7 @@ export default function Home() {
     ? {
         title: localResult.title,
         message: `I just took the Afflux Wealth Personality Test and I'm ${localResult.title}! ${localResult.headline} Discover yours via Afflux.`,
-        url: "https://afflux.ng",
+        url: "https://afflux.app",
       }
     : (fetcher.data?.share ?? defaultSharePayload);
   const totalLeaderboardVotes =
@@ -635,7 +635,7 @@ export default function Home() {
   async function downloadResultCard() {
     if (!resultCardRef.current) return;
     const dataUrl = await toPng(resultCardRef.current, {
-      backgroundColor: "#050505",
+      backgroundColor: "#ffffff",
       cacheBust: true,
       pixelRatio: 2,
     });
@@ -890,8 +890,11 @@ export default function Home() {
             >
               {result ? (
                 // Result Card - replaces test when result is available
-                <div ref={resultCardRef}>
-                  <CardHeader className="relative p-8 px-0 md:px-8 pb-6">
+                <div
+                  ref={resultCardRef}
+                  className="relative rounded-3xl overflow-hidden bg-gradient-to-br from-[#cc9933]/10 via-white to-[#cc9933]/5 p-6 md:p-8"
+                >
+                  <CardHeader className="relative p-0 pb-6">
                     <div className="flex items-start justify-between gap-4 mb-4">
                       <div className="space-y-2">
                         <Badge className="border-[#cc9933]/60 bg-[#cc9933]/10 text-[#cc9933] text-[10px] font-semibold px-3 py-1">
@@ -910,7 +913,7 @@ export default function Home() {
                     </CardDescription>
                   </CardHeader>
 
-                  <CardContent className="relative space-y-6 p-0 md:p-8 pt-0">
+                  <CardContent className="relative space-y-6 p-0 pt-0">
                     {/* Personality Insight */}
                     <div className="relative rounded-3xl border border-[#cc9933]/20 bg-linear-to-br from-[#cc9933]/5 via-white to-white p-6 shadow-sm">
                       <div className="flex items-start gap-4">
