@@ -893,39 +893,39 @@ export default function Home() {
                 <>
                   <div
                     ref={resultCardRef}
-                    className="relative rounded-3xl overflow-hidden bg-gradient-to-br from-[#cc9933]/10 via-white to-[#cc9933]/5 p-6 md:p-8 w-full"
+                    className="relative rounded-2xl md:rounded-3xl overflow-hidden bg-gradient-to-br from-[#cc9933]/10 via-white to-[#cc9933]/5 p-4 md:p-8 w-full"
                   >
-                    <CardHeader className="relative p-0 pb-6">
-                      <div className="flex items-start justify-between gap-4 mb-4">
-                        <div className="space-y-2">
-                          <Badge className="border-[#cc9933]/60 bg-[#cc9933]/10 text-[#cc9933] text-[10px] font-semibold px-3 py-1">
+                    <CardHeader className="relative p-0 pb-4 md:pb-6">
+                      <div className="flex items-start justify-between gap-3 mb-3">
+                        <div className="space-y-1.5">
+                          <Badge className="border-[#cc9933]/60 bg-[#cc9933]/10 text-[#cc9933] text-[9px] md:text-[10px] font-semibold px-2.5 py-1">
                             Your Money Personality
                           </Badge>
-                          <CardTitle className="text-3xl font-bold text-[#1a1a1a] leading-tight">
+                          <CardTitle className="text-2xl md:text-3xl font-bold text-[#1a1a1a] leading-tight">
                             {result.title}
                           </CardTitle>
                         </div>
-                        <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-linear-to-br from-[#cc9933]/10 to-[#cc9933]/5 border border-[#cc9933]/20 shrink-0">
-                          <Crown className="h-6 w-6 text-[#cc9933]" />
+                        <div className="flex h-10 w-10 md:h-12 md:w-12 items-center justify-center rounded-xl md:rounded-2xl bg-linear-to-br from-[#cc9933]/10 to-[#cc9933]/5 border border-[#cc9933]/20 shrink-0">
+                          <Crown className="h-5 w-5 md:h-6 md:w-6 text-[#cc9933]" />
                         </div>
                       </div>
-                      <CardDescription className="text-base text-[#666] font-medium">
+                      <CardDescription className="text-sm md:text-base text-[#666] font-medium leading-snug">
                         {result.headline}
                       </CardDescription>
                     </CardHeader>
 
-                    <CardContent className="relative space-y-6 p-0 pt-0">
+                    <CardContent className="relative space-y-3 md:space-y-6 p-0 pt-0">
                       {/* Personality Insight */}
-                      <div className="relative rounded-3xl border border-[#cc9933]/20 bg-linear-to-br from-[#cc9933]/5 via-white to-white p-6">
-                        <div className="flex items-start gap-4">
-                          <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-[#cc9933]/10 border border-[#cc9933]/20 shrink-0">
-                            <Lightbulb className="h-5 w-5 text-[#cc9933]" />
+                      <div className="relative rounded-2xl md:rounded-3xl border border-[#cc9933]/20 bg-linear-to-br from-[#cc9933]/5 via-white to-white p-4 md:p-6">
+                        <div className="flex items-start gap-3">
+                          <div className="flex h-8 w-8 md:h-10 md:w-10 items-center justify-center rounded-lg md:rounded-xl bg-[#cc9933]/10 border border-[#cc9933]/20 shrink-0">
+                            <Lightbulb className="h-4 w-4 md:h-5 md:w-5 text-[#cc9933]" />
                           </div>
-                          <div className="space-y-2 flex-1">
-                            <p className="text-xs font-semibold uppercase tracking-wider text-[#cc9933]">
+                          <div className="space-y-1 flex-1">
+                            <p className="text-[10px] md:text-xs font-semibold uppercase tracking-wider text-[#cc9933]">
                               Personality Insight
                             </p>
-                            <p className="text-sm text-[#1a1a1a] leading-relaxed">
+                            <p className="text-xs md:text-sm text-[#1a1a1a] leading-relaxed">
                               {result.personality}
                             </p>
                           </div>
@@ -933,46 +933,46 @@ export default function Home() {
                       </div>
 
                       {/* Strengths & Blind Spots Grid */}
-                      <div className="grid gap-4 sm:grid-cols-2">
-                        <div className="group relative rounded-2xl border border-[#E5E5E5] bg-white p-5 hover:border-[#cc9933]/30 transition-all hover:shadow-md">
-                          <div className="flex items-center gap-3 mb-3">
-                            <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-[#cc9933]/10">
-                              <Zap className="h-4 w-4 text-[#cc9933]" />
+                      <div className="grid gap-3 sm:grid-cols-2">
+                        <div className="group relative rounded-xl md:rounded-2xl border border-[#E5E5E5] bg-white p-3.5 md:p-5 hover:border-[#cc9933]/30 transition-all hover:shadow-md">
+                          <div className="flex items-center gap-2 mb-2">
+                            <div className="flex h-7 w-7 md:h-8 md:w-8 items-center justify-center rounded-lg bg-[#cc9933]/10">
+                              <Zap className="h-3.5 w-3.5 md:h-4 md:w-4 text-[#cc9933]" />
                             </div>
-                            <p className="text-xs font-semibold uppercase tracking-wider text-[#666]">
+                            <p className="text-[10px] md:text-xs font-semibold uppercase tracking-wider text-[#666]">
                               Strength
                             </p>
                           </div>
-                          <p className="text-xs font-medium text-[#1a1a1a] leading-relaxed">
+                          <p className="text-[11px] md:text-xs font-medium text-[#1a1a1a] leading-relaxed">
                             {result.strength}
                           </p>
                         </div>
-                        <div className="group relative rounded-2xl border border-[#E5E5E5] bg-white p-5 hover:border-[#cc9933]/30 transition-all hover:shadow-md">
-                          <div className="flex items-center gap-3 mb-3">
-                            <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-[#F5F5F5]">
-                              <Target className="h-4 w-4 text-[#666]" />
+                        <div className="group relative rounded-xl md:rounded-2xl border border-[#E5E5E5] bg-white p-3.5 md:p-5 hover:border-[#cc9933]/30 transition-all hover:shadow-md">
+                          <div className="flex items-center gap-2 mb-2">
+                            <div className="flex h-7 w-7 md:h-8 md:w-8 items-center justify-center rounded-lg bg-[#F5F5F5]">
+                              <Target className="h-3.5 w-3.5 md:h-4 md:w-4 text-[#666]" />
                             </div>
-                            <p className="text-xs font-semibold uppercase tracking-wider text-[#666]">
+                            <p className="text-[10px] md:text-xs font-semibold uppercase tracking-wider text-[#666]">
                               Blind Spot
                             </p>
                           </div>
-                          <p className="text-xs font-medium text-[#1a1a1a] leading-relaxed">
+                          <p className="text-[11px] md:text-xs font-medium text-[#1a1a1a] leading-relaxed">
                             {result.weakness}
                           </p>
                         </div>
                       </div>
 
                       {/* Afflux Tip - Premium Highlight */}
-                      <div className="relative rounded-3xl border-2 border-[#cc9933]/30 bg-linear-to-br from-[#cc9933]/8 via-[#cc9933]/5 to-white p-6">
-                        <div className="flex items-start gap-4">
-                          <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-[#cc9933] border-2 border-[#cc9933]/20 shrink-0">
-                            <Sparkles className="h-5 w-5 text-white" />
+                      <div className="relative rounded-2xl md:rounded-3xl border-2 border-[#cc9933]/30 bg-linear-to-br from-[#cc9933]/8 via-[#cc9933]/5 to-white p-4 md:p-6">
+                        <div className="flex items-start gap-3">
+                          <div className="flex h-8 w-8 md:h-10 md:w-10 items-center justify-center rounded-lg md:rounded-xl bg-[#cc9933] border-2 border-[#cc9933]/20 shrink-0">
+                            <Sparkles className="h-4 w-4 md:h-5 md:w-5 text-white" />
                           </div>
-                          <div className="space-y-2 flex-1">
-                            <p className="text-xs font-bold uppercase tracking-[0.2em] text-[#cc9933]">
+                          <div className="space-y-1 flex-1">
+                            <p className="text-[10px] md:text-xs font-bold uppercase tracking-[0.15em] md:tracking-[0.2em] text-[#cc9933]">
                               Afflux Recommendation
                             </p>
-                            <p className="text-sm text-[#1a1a1a] leading-relaxed font-medium">
+                            <p className="text-xs md:text-sm text-[#1a1a1a] leading-relaxed font-medium">
                               {result.affluxTip}
                             </p>
                           </div>
