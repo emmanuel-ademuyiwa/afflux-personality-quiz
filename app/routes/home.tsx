@@ -978,63 +978,60 @@ export default function Home() {
                           </div>
                         </div>
                       </div>
-
-                      {/* Score Breakdown */}
-                      {tallies && (
-                        <div className="space-y-3">
-                          <p className="text-xs font-semibold uppercase tracking-wider text-[#666] px-1">
-                            Your Score Breakdown
-                          </p>
-                          <div className="grid grid-cols-3 gap-3">
-                            {(Object.keys(personaDeck) as PersonaId[]).map(
-                              (key) => {
-                                const percent = Math.round(
-                                  (tallies[key] / questionBank.length) * 100
-                                );
-                                const isActive = key === result.id;
-                                return (
-                                  <div
-                                    key={key}
-                                    className={cn(
-                                      "relative rounded-2xl border-2 p-4 text-center transition-all",
-                                      isActive
-                                        ? "border-[#cc9933] bg-[#cc9933]/8"
-                                        : "border-[#E5E5E5] bg-white hover:border-[#cc9933]/30"
-                                    )}
-                                  >
-                                    {isActive && (
-                                      <div className="absolute -top-2 -right-2 flex h-5 w-5 items-center justify-center rounded-full bg-[#cc9933] border-2 border-white">
-                                        <Crown className="h-3 w-3 text-white" />
-                                      </div>
-                                    )}
-                                    <p className="text-[10px] font-bold uppercase tracking-[0.2em] text-[#666] mb-1">
-                                      {personaDeck[key].title.replace(
-                                        "The ",
-                                        ""
-                                      )}
-                                    </p>
-                                    <p
-                                      className={cn(
-                                        "text-2xl font-bold mb-1",
-                                        isActive
-                                          ? "text-[#cc9933]"
-                                          : "text-[#1a1a1a]"
-                                      )}
-                                    >
-                                      {percent}%
-                                    </p>
-                                    <p className="text-[10px] text-[#666] font-medium">
-                                      {tallies[key]} / {questionBank.length}
-                                    </p>
-                                  </div>
-                                );
-                              }
-                            )}
-                          </div>
-                        </div>
-                      )}
                     </CardContent>
                   </div>
+
+                  {/* Score Breakdown - Outside download area */}
+                  {tallies && (
+                    <div className="space-y-3 mt-6">
+                      <p className="text-xs font-semibold uppercase tracking-wider text-[#666] px-1">
+                        Your Score Breakdown
+                      </p>
+                      <div className="grid grid-cols-3 gap-3">
+                        {(Object.keys(personaDeck) as PersonaId[]).map(
+                          (key) => {
+                            const percent = Math.round(
+                              (tallies[key] / questionBank.length) * 100
+                            );
+                            const isActive = key === result.id;
+                            return (
+                              <div
+                                key={key}
+                                className={cn(
+                                  "relative rounded-2xl border-2 p-4 text-center transition-all",
+                                  isActive
+                                    ? "border-[#cc9933] bg-[#cc9933]/8"
+                                    : "border-[#E5E5E5] bg-white hover:border-[#cc9933]/30"
+                                )}
+                              >
+                                {isActive && (
+                                  <div className="absolute -top-2 -right-2 flex h-5 w-5 items-center justify-center rounded-full bg-[#cc9933] border-2 border-white">
+                                    <Crown className="h-3 w-3 text-white" />
+                                  </div>
+                                )}
+                                <p className="text-[10px] font-bold uppercase tracking-[0.2em] text-[#666] mb-1">
+                                  {personaDeck[key].title.replace("The ", "")}
+                                </p>
+                                <p
+                                  className={cn(
+                                    "text-2xl font-bold mb-1",
+                                    isActive
+                                      ? "text-[#cc9933]"
+                                      : "text-[#1a1a1a]"
+                                  )}
+                                >
+                                  {percent}%
+                                </p>
+                                <p className="text-[10px] text-[#666] font-medium">
+                                  {tallies[key]} / {questionBank.length}
+                                </p>
+                              </div>
+                            );
+                          }
+                        )}
+                      </div>
+                    </div>
+                  )}
 
                   {/* Action Buttons - Outside download area */}
                   <div className="flex flex-col gap-3 pt-6 mt-6 border-t border-[#E5E5E5]">
