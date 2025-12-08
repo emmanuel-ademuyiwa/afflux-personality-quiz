@@ -485,6 +485,8 @@ export async function action({ request }: Route.ActionArgs) {
   });
 }
 
+const QUIZ_STORAGE_KEY = "afflux-quiz-progress";
+
 export default function Home() {
   const { leaderboard: initialLeaderboard, featured } =
     useLoaderData<LoaderData>();
@@ -513,6 +515,55 @@ export default function Home() {
   const [isSubmitted, setIsSubmitted] = React.useState(false);
   const resultCardRef = React.useRef<HTMLDivElement>(null);
   const dataFormRef = React.useRef<HTMLDivElement>(null);
+
+  // Load saved progress from localStorage on mount
+  React.useEffect(() => {
+    if (typeof window === "undefined") return;
+
+    try {
+      const savedProgress = localStorage.getItem(QUIZ_STORAGE_KEY);
+      if (savedProgress) {
+        const parsed = JSON.parse(savedProgress);
+        const savedTime = parsed.timestamp || 0;
+        const currentTime = Date.now();
+        const hoursSinceLastSave = (currentTime - savedTime) / (1000 * 60 * 60);
+
+        // Only restore if saved within last 24 hours
+        if (hoursSinceLastSave < 24) {
+          if (parsed.userData) setUserData(parsed.userData);
+          if (parsed.answers) setAnswers(parsed.answers);
+          if (parsed.currentQuestionIndex !== undefined)
+            setCurrentQuestionIndex(parsed.currentQuestionIndex);
+          if (parsed.isDataCollected)
+            setIsDataCollected(parsed.isDataCollected);
+        } else {
+          // Clear expired data
+          localStorage.removeItem(QUIZ_STORAGE_KEY);
+        }
+      }
+    } catch (error) {
+      console.error("Failed to load quiz progress:", error);
+    }
+  }, []);
+
+  // Save progress to localStorage whenever state changes
+  React.useEffect(() => {
+    if (typeof window === "undefined") return;
+    if (!isDataCollected) return; // Only save after test has started
+
+    try {
+      const progressData = {
+        userData,
+        answers,
+        currentQuestionIndex,
+        isDataCollected,
+        timestamp: Date.now(),
+      };
+      localStorage.setItem(QUIZ_STORAGE_KEY, JSON.stringify(progressData));
+    } catch (error) {
+      console.error("Failed to save quiz progress:", error);
+    }
+  }, [userData, answers, currentQuestionIndex, isDataCollected]);
 
   const answeredCount = React.useMemo(
     () => Object.keys(answers).length,
@@ -590,6 +641,11 @@ export default function Home() {
 
     // Submit quiz data when result is calculated
     submitQuizData(persona);
+
+    // Clear localStorage when quiz is completed
+    if (typeof window !== "undefined") {
+      localStorage.removeItem(QUIZ_STORAGE_KEY);
+    }
   }, [answers, answeredCount, submitQuizData]);
 
   React.useEffect(() => {
@@ -1387,6 +1443,10 @@ export default function Home() {
                             setLocalResult(null);
                             setLocalTallies(null);
                             setIsSubmitted(false);
+                            // Clear localStorage when starting over
+                            if (typeof window !== "undefined") {
+                              localStorage.removeItem(QUIZ_STORAGE_KEY);
+                            }
                           }}
                           disabled={isSubmitting}
                         >
