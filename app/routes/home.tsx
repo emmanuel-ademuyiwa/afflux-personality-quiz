@@ -901,7 +901,7 @@ export default function Home() {
                           <Badge className="border-[#cc9933]/60 bg-[#cc9933]/10 text-[#cc9933] text-[9px] md:text-[10px] font-semibold px-2.5 py-1">
                             Your Money Personality
                           </Badge>
-                          <CardTitle className="text-2xl md:text-3xl font-bold text-[#1a1a1a] leading-tight">
+                          <CardTitle className="-mb-3 mt-2 text-2xl md:text-3xl font-bold text-[#1a1a1a] leading-tight">
                             {result.title}
                           </CardTitle>
                         </div>
