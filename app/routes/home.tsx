@@ -890,173 +890,178 @@ export default function Home() {
             >
               {result ? (
                 // Result Card - replaces test when result is available
-                <div
-                  ref={resultCardRef}
-                  className="relative rounded-3xl overflow-hidden bg-gradient-to-br from-[#cc9933]/10 via-white to-[#cc9933]/5 p-6 md:p-8"
-                >
-                  <CardHeader className="relative p-0 pb-6">
-                    <div className="flex items-start justify-between gap-4 mb-4">
-                      <div className="space-y-2">
-                        <Badge className="border-[#cc9933]/60 bg-[#cc9933]/10 text-[#cc9933] text-[10px] font-semibold px-3 py-1">
-                          Your Money Personality
-                        </Badge>
-                        <CardTitle className="text-3xl font-bold text-[#1a1a1a] leading-tight">
-                          {result.title}
-                        </CardTitle>
-                      </div>
-                      <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-linear-to-br from-[#cc9933]/10 to-[#cc9933]/5 border border-[#cc9933]/20 shrink-0">
-                        <Crown className="h-6 w-6 text-[#cc9933]" />
-                      </div>
-                    </div>
-                    <CardDescription className="text-base text-[#666] font-medium">
-                      {result.headline}
-                    </CardDescription>
-                  </CardHeader>
-
-                  <CardContent className="relative space-y-6 p-0 pt-0">
-                    {/* Personality Insight */}
-                    <div className="relative rounded-3xl border border-[#cc9933]/20 bg-linear-to-br from-[#cc9933]/5 via-white to-white p-6 shadow-sm">
-                      <div className="flex items-start gap-4">
-                        <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-[#cc9933]/10 border border-[#cc9933]/20 shrink-0">
-                          <Lightbulb className="h-5 w-5 text-[#cc9933]" />
+                <>
+                  <div
+                    ref={resultCardRef}
+                    className="relative rounded-3xl overflow-hidden bg-gradient-to-br from-[#cc9933]/10 via-white to-[#cc9933]/5 p-6 md:p-8 w-full"
+                  >
+                    <CardHeader className="relative p-0 pb-6">
+                      <div className="flex items-start justify-between gap-4 mb-4">
+                        <div className="space-y-2">
+                          <Badge className="border-[#cc9933]/60 bg-[#cc9933]/10 text-[#cc9933] text-[10px] font-semibold px-3 py-1">
+                            Your Money Personality
+                          </Badge>
+                          <CardTitle className="text-3xl font-bold text-[#1a1a1a] leading-tight">
+                            {result.title}
+                          </CardTitle>
                         </div>
-                        <div className="space-y-2 flex-1">
-                          <p className="text-xs font-semibold uppercase tracking-wider text-[#cc9933]">
-                            Personality Insight
-                          </p>
-                          <p className="text-sm text-[#1a1a1a] leading-relaxed">
-                            {result.personality}
-                          </p>
+                        <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-linear-to-br from-[#cc9933]/10 to-[#cc9933]/5 border border-[#cc9933]/20 shrink-0">
+                          <Crown className="h-6 w-6 text-[#cc9933]" />
                         </div>
                       </div>
-                    </div>
+                      <CardDescription className="text-base text-[#666] font-medium">
+                        {result.headline}
+                      </CardDescription>
+                    </CardHeader>
 
-                    {/* Strengths & Blind Spots Grid */}
-                    <div className="grid gap-4 sm:grid-cols-2">
-                      <div className="group relative rounded-2xl border border-[#E5E5E5] bg-white p-5 hover:border-[#cc9933]/30 transition-all hover:shadow-md">
-                        <div className="flex items-center gap-3 mb-3">
-                          <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-[#cc9933]/10">
-                            <Zap className="h-4 w-4 text-[#cc9933]" />
+                    <CardContent className="relative space-y-6 p-0 pt-0">
+                      {/* Personality Insight */}
+                      <div className="relative rounded-3xl border border-[#cc9933]/20 bg-linear-to-br from-[#cc9933]/5 via-white to-white p-6">
+                        <div className="flex items-start gap-4">
+                          <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-[#cc9933]/10 border border-[#cc9933]/20 shrink-0">
+                            <Lightbulb className="h-5 w-5 text-[#cc9933]" />
                           </div>
-                          <p className="text-xs font-semibold uppercase tracking-wider text-[#666]">
-                            Strength
-                          </p>
-                        </div>
-                        <p className="text-xs font-medium text-[#1a1a1a] leading-relaxed">
-                          {result.strength}
-                        </p>
-                      </div>
-                      <div className="group relative rounded-2xl border border-[#E5E5E5] bg-white p-5 hover:border-[#cc9933]/30 transition-all hover:shadow-md">
-                        <div className="flex items-center gap-3 mb-3">
-                          <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-[#F5F5F5]">
-                            <Target className="h-4 w-4 text-[#666]" />
+                          <div className="space-y-2 flex-1">
+                            <p className="text-xs font-semibold uppercase tracking-wider text-[#cc9933]">
+                              Personality Insight
+                            </p>
+                            <p className="text-sm text-[#1a1a1a] leading-relaxed">
+                              {result.personality}
+                            </p>
                           </div>
-                          <p className="text-xs font-semibold uppercase tracking-wider text-[#666]">
-                            Blind Spot
-                          </p>
-                        </div>
-                        <p className="text-xs font-medium text-[#1a1a1a] leading-relaxed">
-                          {result.weakness}
-                        </p>
-                      </div>
-                    </div>
-
-                    {/* Afflux Tip - Premium Highlight */}
-                    <div className="relative rounded-3xl border-2 border-[#cc9933]/30 bg-linear-to-br from-[#cc9933]/8 via-[#cc9933]/5 to-white p-6 shadow-sm">
-                      <div className="flex items-start gap-4">
-                        <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-[#cc9933] border-2 border-[#cc9933]/20 shrink-0 shadow-sm">
-                          <Sparkles className="h-5 w-5 text-white" />
-                        </div>
-                        <div className="space-y-2 flex-1">
-                          <p className="text-xs font-bold uppercase tracking-[0.2em] text-[#cc9933]">
-                            Afflux Recommendation
-                          </p>
-                          <p className="text-sm text-[#1a1a1a] leading-relaxed font-medium">
-                            {result.affluxTip}
-                          </p>
                         </div>
                       </div>
-                    </div>
 
-                    {/* Score Breakdown */}
-                    {tallies && (
-                      <div className="space-y-3">
-                        <p className="text-xs font-semibold uppercase tracking-wider text-[#666] px-1">
-                          Your Score Breakdown
-                        </p>
-                        <div className="grid grid-cols-3 gap-3">
-                          {(Object.keys(personaDeck) as PersonaId[]).map(
-                            (key) => {
-                              const percent = Math.round(
-                                (tallies[key] / questionBank.length) * 100
-                              );
-                              const isActive = key === result.id;
-                              return (
-                                <div
-                                  key={key}
-                                  className={cn(
-                                    "relative rounded-2xl border-2 p-4 text-center transition-all",
-                                    isActive
-                                      ? "border-[#cc9933] bg-[#cc9933]/8 shadow-md scale-105"
-                                      : "border-[#E5E5E5] bg-white hover:border-[#cc9933]/30"
-                                  )}
-                                >
-                                  {isActive && (
-                                    <div className="absolute -top-2 -right-2 flex h-5 w-5 items-center justify-center rounded-full bg-[#cc9933] border-2 border-white shadow-sm">
-                                      <Crown className="h-3 w-3 text-white" />
-                                    </div>
-                                  )}
-                                  <p className="text-[10px] font-bold uppercase tracking-[0.2em] text-[#666] mb-1">
-                                    {personaDeck[key].title.replace("The ", "")}
-                                  </p>
-                                  <p
+                      {/* Strengths & Blind Spots Grid */}
+                      <div className="grid gap-4 sm:grid-cols-2">
+                        <div className="group relative rounded-2xl border border-[#E5E5E5] bg-white p-5 hover:border-[#cc9933]/30 transition-all hover:shadow-md">
+                          <div className="flex items-center gap-3 mb-3">
+                            <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-[#cc9933]/10">
+                              <Zap className="h-4 w-4 text-[#cc9933]" />
+                            </div>
+                            <p className="text-xs font-semibold uppercase tracking-wider text-[#666]">
+                              Strength
+                            </p>
+                          </div>
+                          <p className="text-xs font-medium text-[#1a1a1a] leading-relaxed">
+                            {result.strength}
+                          </p>
+                        </div>
+                        <div className="group relative rounded-2xl border border-[#E5E5E5] bg-white p-5 hover:border-[#cc9933]/30 transition-all hover:shadow-md">
+                          <div className="flex items-center gap-3 mb-3">
+                            <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-[#F5F5F5]">
+                              <Target className="h-4 w-4 text-[#666]" />
+                            </div>
+                            <p className="text-xs font-semibold uppercase tracking-wider text-[#666]">
+                              Blind Spot
+                            </p>
+                          </div>
+                          <p className="text-xs font-medium text-[#1a1a1a] leading-relaxed">
+                            {result.weakness}
+                          </p>
+                        </div>
+                      </div>
+
+                      {/* Afflux Tip - Premium Highlight */}
+                      <div className="relative rounded-3xl border-2 border-[#cc9933]/30 bg-linear-to-br from-[#cc9933]/8 via-[#cc9933]/5 to-white p-6">
+                        <div className="flex items-start gap-4">
+                          <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-[#cc9933] border-2 border-[#cc9933]/20 shrink-0">
+                            <Sparkles className="h-5 w-5 text-white" />
+                          </div>
+                          <div className="space-y-2 flex-1">
+                            <p className="text-xs font-bold uppercase tracking-[0.2em] text-[#cc9933]">
+                              Afflux Recommendation
+                            </p>
+                            <p className="text-sm text-[#1a1a1a] leading-relaxed font-medium">
+                              {result.affluxTip}
+                            </p>
+                          </div>
+                        </div>
+                      </div>
+
+                      {/* Score Breakdown */}
+                      {tallies && (
+                        <div className="space-y-3">
+                          <p className="text-xs font-semibold uppercase tracking-wider text-[#666] px-1">
+                            Your Score Breakdown
+                          </p>
+                          <div className="grid grid-cols-3 gap-3">
+                            {(Object.keys(personaDeck) as PersonaId[]).map(
+                              (key) => {
+                                const percent = Math.round(
+                                  (tallies[key] / questionBank.length) * 100
+                                );
+                                const isActive = key === result.id;
+                                return (
+                                  <div
+                                    key={key}
                                     className={cn(
-                                      "text-2xl font-bold mb-1",
+                                      "relative rounded-2xl border-2 p-4 text-center transition-all",
                                       isActive
-                                        ? "text-[#cc9933]"
-                                        : "text-[#1a1a1a]"
+                                        ? "border-[#cc9933] bg-[#cc9933]/8"
+                                        : "border-[#E5E5E5] bg-white hover:border-[#cc9933]/30"
                                     )}
                                   >
-                                    {percent}%
-                                  </p>
-                                  <p className="text-[10px] text-[#666] font-medium">
-                                    {tallies[key]} / {questionBank.length}
-                                  </p>
-                                </div>
-                              );
-                            }
-                          )}
+                                    {isActive && (
+                                      <div className="absolute -top-2 -right-2 flex h-5 w-5 items-center justify-center rounded-full bg-[#cc9933] border-2 border-white">
+                                        <Crown className="h-3 w-3 text-white" />
+                                      </div>
+                                    )}
+                                    <p className="text-[10px] font-bold uppercase tracking-[0.2em] text-[#666] mb-1">
+                                      {personaDeck[key].title.replace(
+                                        "The ",
+                                        ""
+                                      )}
+                                    </p>
+                                    <p
+                                      className={cn(
+                                        "text-2xl font-bold mb-1",
+                                        isActive
+                                          ? "text-[#cc9933]"
+                                          : "text-[#1a1a1a]"
+                                      )}
+                                    >
+                                      {percent}%
+                                    </p>
+                                    <p className="text-[10px] text-[#666] font-medium">
+                                      {tallies[key]} / {questionBank.length}
+                                    </p>
+                                  </div>
+                                );
+                              }
+                            )}
+                          </div>
                         </div>
-                      </div>
-                    )}
+                      )}
+                    </CardContent>
+                  </div>
 
-                    {/* Action Buttons */}
-                    <div className="flex flex-col gap-3 pt-4 border-t border-[#E5E5E5]">
-                      <div className="flex flex-col gap-2 sm:flex-row sm:flex-wrap">
-                        <Button
-                          type="button"
-                          variant="default"
-                          size="lg"
-                          className="w-full sm:flex-1"
-                          onClick={downloadResultCard}
-                        >
-                          <Download className="mr-2 h-4 w-4" />
-                          Download Card
-                        </Button>
-                        <Button
-                          type="button"
-                          variant="outline"
-                          size="lg"
-                          className="w-full sm:flex-1"
-                          onClick={shareNative}
-                        >
-                          <Share2 className="mr-2 h-4 w-4" />
-                          Share Result
-                        </Button>
-                      </div>
+                  {/* Action Buttons - Outside download area */}
+                  <div className="flex flex-col gap-3 pt-6 mt-6 border-t border-[#E5E5E5]">
+                    <div className="flex flex-col gap-2 sm:flex-row sm:flex-wrap">
+                      <Button
+                        type="button"
+                        variant="default"
+                        size="lg"
+                        className="w-full sm:flex-1"
+                        onClick={downloadResultCard}
+                      >
+                        <Download className="mr-2 h-4 w-4" />
+                        Download Card
+                      </Button>
+                      <Button
+                        type="button"
+                        variant="outline"
+                        size="lg"
+                        className="w-full sm:flex-1"
+                        onClick={shareNative}
+                      >
+                        <Share2 className="mr-2 h-4 w-4" />
+                        Share Result
+                      </Button>
                     </div>
-                  </CardContent>
-                </div>
+                  </div>
+                </>
               ) : !isDataCollected ? (
                 <CardContent className="p-4 sm:p-8">
                   <CardHeader className="p-0 pb-6">
