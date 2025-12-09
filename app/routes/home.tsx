@@ -411,7 +411,20 @@ export function meta({}: Route.MetaArgs) {
     },
     {
       property: "og:image",
-      content: "/image.png",
+      content: "https://afflux.app/afflux-og-image.png",
+    },
+    {
+      property: "og:image:width",
+      content: "1200",
+    },
+    {
+      property: "og:image:height",
+      content: "630",
+    },
+    {
+      property: "og:image:alt",
+      content:
+        "Afflux Wealth Personality Test - Discover if you're a Saver, Spender, or Investor",
     },
     {
       name: "twitter:card",
@@ -428,7 +441,12 @@ export function meta({}: Route.MetaArgs) {
     },
     {
       name: "twitter:image",
-      content: "/image.png",
+      content: "https://afflux.app/afflux-og-image.png",
+    },
+    {
+      name: "twitter:image:alt",
+      content:
+        "Afflux Wealth Personality Test - Discover if you're a Saver, Spender, or Investor",
     },
   ];
 }
