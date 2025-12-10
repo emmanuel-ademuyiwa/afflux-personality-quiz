@@ -355,7 +355,7 @@ const defaultSharePayload = {
   title: "Afflux Wealth Personality Test",
   message:
     "I'm discovering whether I'm a Saver, Spender or Investor with Afflux. Jump in and get your own card.",
-  url: "https://afflux.app",
+  url: "https://www.afflux.app",
 };
 
 function evaluateResult(tallies: Leaderboard): PersonaId {
@@ -386,7 +386,8 @@ const userDataSchema = Yup.object().shape({
 
 export function meta({ location }: Route.MetaArgs) {
   // Use hardcoded base URL for OG images (required to be absolute)
-  const baseUrl = "https://afflux.app";
+  // Using www.afflux.app to avoid redirects that iOS share sheets don't follow
+  const baseUrl = "https://www.afflux.app";
   const ogImageUrl = `${baseUrl}/afflux-og-image.png`;
   const ogUrl = `${baseUrl}${location.pathname}${location.search}`;
 
@@ -413,6 +414,10 @@ export function meta({ location }: Route.MetaArgs) {
     {
       property: "og:type",
       content: "website",
+    },
+    {
+      property: "og:site_name",
+      content: "Afflux",
     },
     {
       property: "og:url",
@@ -520,7 +525,7 @@ export async function action({ request }: Route.ActionArgs) {
     share: {
       title: persona.title,
       message: shareMessage,
-      url: "https://afflux.app",
+      url: "https://www.afflux.app",
     },
   });
 }
@@ -714,7 +719,7 @@ export default function Home() {
     ? {
         title: localResult.title,
         message: `I just took the Afflux Wealth Personality Test and I'm ${localResult.title}! ${localResult.headline} Discover yours via Afflux.`,
-        url: "https://afflux.app",
+        url: "https://www.afflux.app",
       }
     : (fetcher.data?.share ?? defaultSharePayload);
   const totalLeaderboardVotes =

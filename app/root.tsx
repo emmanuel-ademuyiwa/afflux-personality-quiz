@@ -12,7 +12,7 @@ import "./app.css";
 
 // Default meta tags for all routes (fallback)
 export const meta: Route.MetaFunction = () => {
-  const baseUrl = "https://afflux.app";
+  const baseUrl = "https://www.afflux.app";
   const ogImageUrl = `${baseUrl}/afflux-og-image.png`;
 
   return [
@@ -35,6 +35,10 @@ export const meta: Route.MetaFunction = () => {
     {
       property: "og:type",
       content: "website",
+    },
+    {
+      property: "og:site_name",
+      content: "Afflux",
     },
     {
       property: "og:url",
@@ -122,7 +126,7 @@ export const links: Route.LinksFunction = () => [
   {
     rel: "preload",
     as: "image",
-    href: "https://afflux.app/afflux-og-image.png",
+    href: "https://www.afflux.app/afflux-og-image.png",
     type: "image/png",
   },
 ];
