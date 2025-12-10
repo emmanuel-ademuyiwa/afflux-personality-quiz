@@ -410,27 +410,6 @@ export function meta({}: Route.MetaArgs) {
       content: "website",
     },
     {
-      property: "og:image",
-      content: "https://afflux.app/afflux-og-image.png",
-    },
-    {
-      property: "og:image:width",
-      content: "1200",
-    },
-    {
-      property: "og:image:height",
-      content: "630",
-    },
-    {
-      property: "og:image:alt",
-      content:
-        "Afflux Wealth Personality Test - Discover if you're a Saver, Spender, or Investor",
-    },
-    {
-      name: "twitter:card",
-      content: "summary_large_image",
-    },
-    {
       name: "twitter:title",
       content: "Afflux Wealth Personality Test",
     },
@@ -438,15 +417,6 @@ export function meta({}: Route.MetaArgs) {
       name: "twitter:description",
       content:
         "Discover if you're a Saver, Spender, or Investor and unlock tailored property wealth moves with Afflux.",
-    },
-    {
-      name: "twitter:image",
-      content: "https://afflux.app/afflux-og-image.png",
-    },
-    {
-      name: "twitter:image:alt",
-      content:
-        "Afflux Wealth Personality Test - Discover if you're a Saver, Spender, or Investor",
     },
   ];
 }
