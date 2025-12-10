@@ -11,44 +11,48 @@ import type { Route } from "./+types/root";
 import "./app.css";
 
 export const meta: Route.MetaFunction = () => {
-  // Use environment variable or fallback to production URL
-  const baseUrl = import.meta.env.VITE_SITE_URL || "https://afflux.app";
-  const ogImageUrl = `${baseUrl}/afflux-og-image.png`;
+  const siteUrl = import.meta.env.VITE_SITE_URL || "https://afflux.app";
+  const ogImageUrl = `${siteUrl}/afflux-og-image.png?v=1`;
 
   return [
+    // --- Open Graph ---
+    { property: "og:title", content: "Afflux Wealth Personality Test" },
     {
-      property: "og:image",
-      content: ogImageUrl,
+      property: "og:description",
+      content: "Discover whether you're a Saver, Spender, or Investor.",
     },
-    {
-      property: "og:image:type",
-      content: "image/png",
-    },
-    {
-      property: "og:image:width",
-      content: "1200",
-    },
-    {
-      property: "og:image:height",
-      content: "630",
-    },
+    { property: "og:url", content: siteUrl },
+    { property: "og:type", content: "website" },
+
+    { property: "og:image", content: ogImageUrl },
+    { property: "og:image:type", content: "image/png" },
+    { property: "og:image:width", content: "1200" },
+    { property: "og:image:height", content: "630" },
     {
       property: "og:image:alt",
       content:
         "Afflux Wealth Personality Test - Discover if you're a Saver, Spender, or Investor",
     },
+
+    // --- Twitter Cards ---
+    { name: "twitter:card", content: "summary_large_image" },
+    { name: "twitter:title", content: "Afflux Wealth Personality Test" },
     {
-      name: "twitter:image",
-      content: ogImageUrl,
+      name: "twitter:description",
+      content: "Discover your money personality in 2 minutes.",
     },
+    { name: "twitter:image", content: ogImageUrl },
     {
       name: "twitter:image:alt",
       content:
         "Afflux Wealth Personality Test - Discover if you're a Saver, Spender, or Investor",
     },
+
+    // General Metadata
     {
-      name: "twitter:card",
-      content: "summary_large_image",
+      name: "description",
+      content:
+        "Discover whether you're a Saver, Spender, or Investor with the Afflux Wealth Personality Test.",
     },
   ];
 };
@@ -115,7 +119,7 @@ export function ErrorBoundary({ error }: Route.ErrorBoundaryProps) {
       error.status === 404
         ? "The requested page could not be found."
         : error.statusText || details;
-  } else if (import.meta.env.DEV && error && error instanceof Error) {
+  } else if (import.meta.env.DEV && error instanceof Error) {
     details = error.message;
     stack = error.stack;
   }
