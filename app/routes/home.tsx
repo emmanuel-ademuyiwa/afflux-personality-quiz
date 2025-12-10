@@ -384,7 +384,12 @@ const userDataSchema = Yup.object().shape({
     .min(10, "Phone number must be at least 10 characters"),
 });
 
-export function meta({}: Route.MetaArgs) {
+export function meta({ location }: Route.MetaArgs) {
+  // Use hardcoded base URL for OG images (required to be absolute)
+  const baseUrl = "https://afflux.app";
+  const ogImageUrl = `${baseUrl}/afflux-og-image.png`;
+  const ogUrl = `${baseUrl}${location.pathname}${location.search}`;
+
   return [
     {
       title:
@@ -410,8 +415,12 @@ export function meta({}: Route.MetaArgs) {
       content: "website",
     },
     {
+      property: "og:url",
+      content: ogUrl,
+    },
+    {
       property: "og:image",
-      content: "https://afflux.app/afflux-og-image.png",
+      content: ogImageUrl,
     },
     {
       property: "og:image:width",
@@ -441,7 +450,7 @@ export function meta({}: Route.MetaArgs) {
     },
     {
       name: "twitter:image",
-      content: "https://afflux.app/afflux-og-image.png",
+      content: ogImageUrl,
     },
     {
       name: "twitter:image:alt",
