@@ -423,6 +423,10 @@ export function meta({ location }: Route.MetaArgs) {
       content: ogImageUrl,
     },
     {
+      property: "og:image:type",
+      content: "image/png",
+    },
+    {
       property: "og:image:width",
       content: "1200",
     },
@@ -434,6 +438,10 @@ export function meta({ location }: Route.MetaArgs) {
       property: "og:image:alt",
       content:
         "Afflux Wealth Personality Test - Discover if you're a Saver, Spender, or Investor",
+    },
+    {
+      property: "og:image:secure_url",
+      content: ogImageUrl,
     },
     {
       name: "twitter:card",
