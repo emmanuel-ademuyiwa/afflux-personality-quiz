@@ -10,38 +10,48 @@ import {
 import type { Route } from "./+types/root";
 import "./app.css";
 
-export const meta: Route.MetaFunction = () => [
-  {
-    property: "og:image",
-    content: "https://afflux.app/afflux-og-image.png",
-  },
-  {
-    property: "og:image:width",
-    content: "1200",
-  },
-  {
-    property: "og:image:height",
-    content: "630",
-  },
-  {
-    property: "og:image:alt",
-    content:
-      "Afflux Wealth Personality Test - Discover if you're a Saver, Spender, or Investor",
-  },
-  {
-    name: "twitter:image",
-    content: "https://afflux.app/afflux-og-image.png",
-  },
-  {
-    name: "twitter:image:alt",
-    content:
-      "Afflux Wealth Personality Test - Discover if you're a Saver, Spender, or Investor",
-  },
-  {
-    name: "twitter:card",
-    content: "summary_large_image",
-  },
-];
+export const meta: Route.MetaFunction = ({ request }) => {
+  const url = new URL(request.url);
+  const baseUrl = `${url.protocol}//${url.host}`;
+  const ogImageUrl = `${baseUrl}/afflux-og-image.png`;
+
+  return [
+    {
+      property: "og:image",
+      content: ogImageUrl,
+    },
+    {
+      property: "og:image:type",
+      content: "image/png",
+    },
+    {
+      property: "og:image:width",
+      content: "1200",
+    },
+    {
+      property: "og:image:height",
+      content: "630",
+    },
+    {
+      property: "og:image:alt",
+      content:
+        "Afflux Wealth Personality Test - Discover if you're a Saver, Spender, or Investor",
+    },
+    {
+      name: "twitter:image",
+      content: ogImageUrl,
+    },
+    {
+      name: "twitter:image:alt",
+      content:
+        "Afflux Wealth Personality Test - Discover if you're a Saver, Spender, or Investor",
+    },
+    {
+      name: "twitter:card",
+      content: "summary_large_image",
+    },
+  ];
+};
 
 export const links: Route.LinksFunction = () => [
   { rel: "preconnect", href: "https://fonts.googleapis.com" },
