@@ -10,9 +10,9 @@ import {
 import type { Route } from "./+types/root";
 import "./app.css";
 
-export const meta: Route.MetaFunction = ({ request }) => {
-  const url = new URL(request.url);
-  const baseUrl = `${url.protocol}//${url.host}`;
+export const meta: Route.MetaFunction = () => {
+  // Use environment variable or fallback to production URL
+  const baseUrl = import.meta.env.VITE_SITE_URL || "https://afflux.app";
   const ogImageUrl = `${baseUrl}/afflux-og-image.png`;
 
   return [
