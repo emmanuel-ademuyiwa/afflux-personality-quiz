@@ -428,11 +428,11 @@ export function meta({ location }: Route.MetaArgs) {
     },
     {
       property: "og:image:width",
-      content: "1200",
+      content: "1536",
     },
     {
       property: "og:image:height",
-      content: "630",
+      content: "1024",
     },
     {
       property: "og:image:alt",
@@ -441,6 +441,11 @@ export function meta({ location }: Route.MetaArgs) {
     },
     {
       property: "og:image:secure_url",
+      content: ogImageUrl,
+    },
+    // Legacy meta tag for some platforms
+    {
+      name: "image",
       content: ogImageUrl,
     },
     {

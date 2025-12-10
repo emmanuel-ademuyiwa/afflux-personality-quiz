@@ -50,11 +50,11 @@ export const meta: Route.MetaFunction = () => {
     },
     {
       property: "og:image:width",
-      content: "1200",
+      content: "1536",
     },
     {
       property: "og:image:height",
-      content: "630",
+      content: "1024",
     },
     {
       property: "og:image:alt",
@@ -62,6 +62,11 @@ export const meta: Route.MetaFunction = () => {
     },
     {
       property: "og:image:secure_url",
+      content: ogImageUrl,
+    },
+    // Legacy meta tag for some platforms
+    {
+      name: "image",
       content: ogImageUrl,
     },
     {
@@ -113,6 +118,13 @@ export const links: Route.LinksFunction = () => [
   },
   { rel: "apple-touch-icon", sizes: "180x180", href: "/apple-touch-icon.png" },
   { rel: "manifest", href: "/site.webmanifest" },
+  // Preload OG image for better iOS share sheet compatibility
+  {
+    rel: "preload",
+    as: "image",
+    href: "https://afflux.app/afflux-og-image.png",
+    type: "image/png",
+  },
 ];
 
 export function Layout({ children }: { children: React.ReactNode }) {
