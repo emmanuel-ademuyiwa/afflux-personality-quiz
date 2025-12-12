@@ -558,6 +558,10 @@ export default function Home() {
     null
   );
   const [isSubmitted, setIsSubmitted] = React.useState(false);
+  const [isSubmitting, setIsSubmitting] = React.useState(false);
+  const [submissionError, setSubmissionError] = React.useState<string | null>(
+    null
+  );
   const resultCardRef = React.useRef<HTMLDivElement>(null);
   const dataFormRef = React.useRef<HTMLDivElement>(null);
 
@@ -620,8 +624,11 @@ export default function Home() {
 
   // Submit quiz data to API
   const submitQuizData = React.useCallback(
-    async (resultPersona: PersonaDetails) => {
-      if (isSubmitted) return;
+    async (resultPersona: PersonaDetails): Promise<boolean> => {
+      if (isSubmitted) return true;
+
+      setIsSubmitting(true);
+      setSubmissionError(null);
 
       const answersPayload = questionBank.map((question) => {
         const value = answers[question.id];
@@ -643,8 +650,8 @@ export default function Home() {
       };
 
       try {
-        await fetch(
-          "https://afflux-staging-backend-3sm5f.ondigitalocean.app/personality-test",
+        const response = await fetch(
+          "https://api.afflux.app/personality-test",
           {
             method: "POST",
             headers: {
@@ -653,16 +660,33 @@ export default function Home() {
             body: JSON.stringify(payload),
           }
         );
+
+        if (!response.ok) {
+          const errorText = await response.text().catch(() => "Unknown error");
+          throw new Error(
+            `Failed to submit quiz data: ${response.status} ${response.statusText}. ${errorText}`
+          );
+        }
+
         setIsSubmitted(true);
+        setIsSubmitting(false);
+        return true;
       } catch (error) {
         console.error("Failed to submit quiz data:", error);
+        const errorMessage =
+          error instanceof Error
+            ? error.message
+            : "Failed to submit quiz data. Please try again.";
+        setSubmissionError(errorMessage);
+        setIsSubmitting(false);
+        return false;
       }
     },
     [answers, userData, isSubmitted]
   );
 
   // Calculate result locally
-  const calculateResult = React.useCallback(() => {
+  const calculateResult = React.useCallback(async () => {
     if (answeredCount !== questionBank.length) return;
 
     const tallies: Leaderboard = {
@@ -682,15 +706,20 @@ export default function Home() {
     const persona = personaDeck[personaId];
 
     setLocalTallies(tallies);
-    setLocalResult(persona);
 
-    // Submit quiz data when result is calculated
-    submitQuizData(persona);
+    // Submit quiz data before showing result
+    const submissionSuccess = await submitQuizData(persona);
 
-    // Clear localStorage when quiz is completed
-    if (typeof window !== "undefined") {
-      localStorage.removeItem(QUIZ_STORAGE_KEY);
+    // Only show result if submission was successful
+    if (submissionSuccess) {
+      setLocalResult(persona);
+
+      // Clear localStorage when quiz is completed
+      if (typeof window !== "undefined") {
+        localStorage.removeItem(QUIZ_STORAGE_KEY);
+      }
     }
+    // If submission failed, error is already set and will be displayed
   }, [answers, answeredCount, submitQuizData]);
 
   React.useEffect(() => {
@@ -711,7 +740,6 @@ export default function Home() {
     }
   }, [localResult]);
 
-  const isSubmitting = false; // No server submission
   const result = localResult || fetcher.data?.result;
   const tallies = localTallies || fetcher.data?.tallies;
   const leaderboard = fetcher.data?.leaderboard ?? initialLeaderboard;
@@ -989,7 +1017,86 @@ export default function Home() {
                   : "border-none shadow-none p-0 md:p-6 md:border md:shadow-sm"
               )}
             >
-              {result ? (
+              {isSubmitting ? (
+                // Loading state while submitting
+                <CardContent className="flex min-h-[60vh] lg:min-h-0 items-center justify-center p-6 sm:p-8 lg:p-12">
+                  <div className="flex flex-col items-center justify-center gap-4 text-center w-full max-w-md">
+                    <div className="flex h-12 w-12 md:h-14 md:w-14 items-center justify-center rounded-full bg-[#cc9933]/10 border-2 border-[#cc9933]/20">
+                      <div className="h-6 w-6 md:h-7 md:w-7 animate-spin rounded-full border-2 border-[#cc9933] border-t-transparent" />
+                    </div>
+                    <div className="space-y-2">
+                      <CardTitle className="text-lg md:text-xl text-[#1a1a1a]">
+                        Submitting your results...
+                      </CardTitle>
+                      <CardDescription className="text-sm md:text-base text-[#666]">
+                        Please wait while we process your personality test.
+                      </CardDescription>
+                    </div>
+                  </div>
+                </CardContent>
+              ) : submissionError ? (
+                // Error state
+                <CardContent className="flex min-h-[60vh] lg:min-h-0 items-center justify-center p-6 sm:p-8 lg:p-12">
+                  <div className="flex flex-col items-center justify-center gap-4 text-center w-full max-w-md">
+                    <div className="flex h-12 w-12 md:h-14 md:w-14 items-center justify-center rounded-full bg-red-100 border-2 border-red-200">
+                      <svg
+                        className="h-6 w-6 md:h-7 md:w-7 text-red-600"
+                        fill="none"
+                        viewBox="0 0 24 24"
+                        stroke="currentColor"
+                      >
+                        <path
+                          strokeLinecap="round"
+                          strokeLinejoin="round"
+                          strokeWidth={2}
+                          d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
+                        />
+                      </svg>
+                    </div>
+                    <div className="space-y-2">
+                      <CardTitle className="text-lg md:text-xl text-red-600">
+                        Submission Failed
+                      </CardTitle>
+                      <CardDescription className="text-sm md:text-base text-[#666]">
+                        {submissionError}
+                      </CardDescription>
+                    </div>
+                    <div className="flex flex-col gap-3 pt-4 w-full">
+                      <Button
+                        onClick={async () => {
+                          if (localTallies) {
+                            const personaId = evaluateResult(localTallies);
+                            const persona = personaDeck[personaId];
+                            const success = await submitQuizData(persona);
+                            if (success) {
+                              setLocalResult(persona);
+                            }
+                          }
+                        }}
+                        size="lg"
+                        className="w-full sm:w-auto"
+                      >
+                        Try Again
+                      </Button>
+                      <Button
+                        variant="outline"
+                        onClick={() => {
+                          if (localTallies) {
+                            const personaId = evaluateResult(localTallies);
+                            const persona = personaDeck[personaId];
+                            setLocalResult(persona);
+                            setSubmissionError(null);
+                          }
+                        }}
+                        size="lg"
+                        className="w-full sm:w-auto"
+                      >
+                        Show Result Anyway
+                      </Button>
+                    </div>
+                  </div>
+                </CardContent>
+              ) : result ? (
                 // Result Card - replaces test when result is available
                 <>
                   <div
@@ -1161,7 +1268,7 @@ export default function Home() {
                   </div>
                 </>
               ) : !isDataCollected ? (
-                <CardContent className="p-4 sm:p-8">
+                <CardContent className="p-0 sm:p-8">
                   <CardHeader className="p-0 pb-6">
                     <CardTitle className="text-[#1a1a1a]">
                       Get Started
