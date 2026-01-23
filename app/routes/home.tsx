@@ -123,50 +123,6 @@ const questionBank: Question[] = [
     ],
   },
   {
-    id: "d4e5f6a7-b8c9-4012-d345-e6f7a8b9c012",
-    title: "How often do you review your accounts?",
-    helper: "Bank statements, apps, alerts — how close are you?",
-    options: [
-      {
-        letter: "A",
-        label: "Weekly. I like keeping tabs.",
-        value: "saver",
-      },
-      {
-        letter: "B",
-        label: "Rarely. It gives me anxiety.",
-        value: "spender",
-      },
-      {
-        letter: "C",
-        label: "Monthly. I check growth and set new targets.",
-        value: "investor",
-      },
-    ],
-  },
-  {
-    id: "e5f6a7b8-c9d0-4123-e456-f7a8b9c0d123",
-    title: "When you think about money, what comes first?",
-    helper: "Security, comfort or freedom?",
-    options: [
-      {
-        letter: "A",
-        label: "Security — I want to be prepared.",
-        value: "saver",
-      },
-      {
-        letter: "B",
-        label: "Comfort — I want to enjoy life.",
-        value: "spender",
-      },
-      {
-        letter: "C",
-        label: "Freedom — I want my money to work.",
-        value: "investor",
-      },
-    ],
-  },
-  {
     id: "f6a7b8c9-d0e1-4234-f567-a8b9c0d1e234",
     title: "How do you usually make financial decisions?",
     helper: "Research-driven, instinctive, or strategic?",
@@ -208,60 +164,6 @@ const questionBank: Question[] = [
         label: "Invest in something that multiplies it.",
         value: "investor",
       },
-    ],
-  },
-  {
-    id: "b8c9d0e1-f2a3-4456-b789-c0d1e2f3a456",
-    title: "How often do you talk about money?",
-    helper: "Silence, vibes, or strategy sessions?",
-    options: [
-      {
-        letter: "A",
-        label: "Only when necessary.",
-        value: "saver",
-      },
-      {
-        letter: "B",
-        label: "Always — I love gist about what to buy.",
-        value: "spender",
-      },
-      {
-        letter: "C",
-        label: "Frequently around business and opportunities.",
-        value: "investor",
-      },
-    ],
-  },
-  {
-    id: "c9d0e1f2-a3b4-4567-c890-d1e2f3a4b567",
-    title: "How do you define money success?",
-    helper: "Different versions of winning.",
-    options: [
-      {
-        letter: "A",
-        label: "Emergency-ready and steady.",
-        value: "saver",
-      },
-      {
-        letter: "B",
-        label: "Living comfortably and looking good.",
-        value: "spender",
-      },
-      {
-        letter: "C",
-        label: "Passive income and time freedom.",
-        value: "investor",
-      },
-    ],
-  },
-  {
-    id: "d0e1f2a3-b4c5-4678-d901-e2f3a4b5c678",
-    title: "If you had to choose one, what would it be?",
-    helper: "Your north star.",
-    options: [
-      { letter: "A", label: "Stability.", value: "saver" },
-      { letter: "B", label: "Lifestyle.", value: "spender" },
-      { letter: "C", label: "Growth.", value: "investor" },
     ],
   },
 ];
